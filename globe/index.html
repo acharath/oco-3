@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CO₂ Globe</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #050505;
+      color: #ccc;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body { display: flex; flex-direction: column; }
+
+    /* ── Header ── */
+    header {
+      height: 44px;
+      flex-shrink: 0;
+      padding: 0 18px;
+      background: #080808;
+      border-bottom: 1px solid #161616;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 10;
+    }
+    header h1 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .prog-wrap {
+      flex: 1; max-width: 260px; height: 3px;
+      background: #161616; border-radius: 2px; overflow: hidden;
+    }
+    #prog {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #3c8fff, #ff4d8d);
+      transition: width 0.15s linear;
+    }
+    #prog-text { font-size: 11px; color: #555; white-space: nowrap; }
+
+    /* Stats row */
+    .header-stats {
+      margin-left: auto;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+    .stat {
+      display: flex; flex-direction: column; align-items: flex-end;
+      gap: 1px;
+    }
+    .stat-val {
+      font-size: 11px; color: #888; font-variant-numeric: tabular-nums;
+    }
+    .stat-lbl { font-size: 9px; color: #383838; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    .header-link {
+      font-size: 11px; color: #383838; text-decoration: none; white-space: nowrap;
+      margin-left: 6px;
+    }
+    .header-link:hover { color: #777; }
+
+    /* ── Globe wrap ── */
+    #globe-wrap {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #050505;
+    }
+
+    /* p5 canvas injected here — make it fill */
+    #globe-wrap canvas {
+      display: block;
+      position: absolute;
+      top: 0; left: 0;
+    }
+
+    /* ── Controls bar ── */
+    .controls-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 0 20px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(to top, rgba(5,5,5,0.88) 0%, rgba(5,5,5,0.3) 70%, transparent 100%);
+      pointer-events: none; /* children re-enable as needed */
+      z-index: 5;
+    }
+
+    #time-label {
+      font-size: 13px;
+      color: #777;
+      white-space: nowrap;
+      min-width: 116px;
+      pointer-events: none;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #time-slider {
+      flex: 1;
+      pointer-events: all;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 3px;
+      background: #1e1e1e;
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+    #time-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      background: #3c8fff;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(60,143,255,0.55);
+      transition: transform 0.1s;
+    }
+    #time-slider::-webkit-slider-thumb:hover { transform: scale(1.25); }
+    #time-slider::-moz-range-thumb {
+      width: 13px; height: 13px; border-radius: 50%; border: none;
+      background: #3c8fff; cursor: pointer;
+    }
+
+    #play-btn {
+      pointer-events: all;
+      background: #111;
+      border: 1px solid #252525;
+      color: #888;
+      padding: 5px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: inherit;
+      letter-spacing: 0.04em;
+      transition: background 0.1s, color 0.1s, border-color 0.1s;
+      white-space: nowrap;
+    }
+    #play-btn:hover { background: #1a1a1a; color: #eee; border-color: #333; }
+    #play-btn.playing { color: #ff4d8d; border-color: #3a1020; }
+
+    /* ── Hints ── */
+    .hint-overlay {
+      position: absolute;
+      top: 14px; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      pointer-events: none;
+      z-index: 4;
+    }
+    .hint-pill {
+      font-size: 10px;
+      color: #2a2a2a;
+      background: rgba(8,8,8,0.5);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid #161616;
+      white-space: nowrap;
+    }
+
+    /* ── Selected city sidebar (HTML layer over canvas) ── */
+    #city-panel {
+      position: absolute;
+      top: 14px; right: 14px;
+      width: 300px;
+      background: rgba(6,6,6,0.94);
+      border: 1px solid #1a1a1a;
+      border-radius: 8px;
+      padding: 16px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 6;
+      pointer-events: none;
+    }
+    #city-panel.visible { display: flex; }
+
+    .panel-city-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .panel-country {
+      font-size: 11px;
+      color: #444;
+      margin-top: 2px;
+    }
+
+    .panel-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .pstat {
+      background: #0d0d0d;
+      border: 1px solid #161616;
+      border-radius: 5px;
+      padding: 7px 10px;
+    }
+    .pstat-val {
+      font-size: 13px;
+      color: #e0e0e0;
+      font-variant-numeric: tabular-nums;
+    }
+    .pstat-lbl {
+      font-size: 9px;
+      color: #383838;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+
+    .panel-divider {
+      height: 1px;
+      background: #111;
+    }
+
+    .panel-mini-chart-label {
+      font-size: 9px;
+      color: #383838;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 2px;
+    }
+
+    #panel-mini-chart {
+      width: 100%;
+      height: 90px;
+      background: #0a0a0a;
+      border: 1px solid #141414;
+      border-radius: 4px;
+    }
+
+    .panel-close-hint {
+      font-size: 10px;
+      color: #252525;
+      text-align: center;
+    }
+
+    /* ── Color legend (bottom-left overlay) ── */
+    #legend-overlay {
+      position: absolute;
+      bottom: 58px;
+      left: 18px;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .legend-title {
+      font-size: 9px;
+      color: #383838;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 5px;
+    }
+    .legend-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    #legend-canvas { border-radius: 2px; }
+    .legend-min, .legend-max {
+      font-size: 10px;
+      color: #444;
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>CO₂ Globe</h1>
+  <div class="prog-wrap"><div id="prog"></div></div>
+  <span id="prog-text">Loading data…</span>
+  <div class="header-stats">
+    <div class="stat">
+      <span class="stat-val" id="stat-points">—</span>
+      <span class="stat-lbl">Points</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val" id="stat-visible">—</span>
+      <span class="stat-lbl">Visible</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val" id="stat-cities">—</span>
+      <span class="stat-lbl">Cities</span>
+    </div>
+  </div>
+  <a class="header-link" href="../index.html">← Back</a>
+</header>
+
+<div id="globe-wrap">
+
+  <!-- Interaction hints -->
+  <div class="hint-overlay">
+    <span class="hint-pill">Drag to rotate</span>
+    <span class="hint-pill">Scroll to zoom</span>
+    <span class="hint-pill">Click a point to inspect</span>
+  </div>
+
+  <!-- HTML color legend (bottom-left) -->
+  <div id="legend-overlay">
+    <div class="legend-title">Global XCO₂</div>
+    <div class="legend-bar-wrap">
+      <span class="legend-min" id="legend-min">—</span>
+      <canvas id="legend-canvas" width="160" height="8"></canvas>
+      <span class="legend-max" id="legend-max">—</span>
+    </div>
+  </div>
+
+  <!-- Controls bar (bottom) -->
+  <div class="controls-bar">
+    <span id="time-label">—</span>
+    <input type="range" id="time-slider" min="0" max="0" value="0" step="1">
+    <button id="play-btn">▶ Play</button>
+  </div>
+
+  <!-- Selected city panel (right side) -->
+  <div id="city-panel">
+    <div>
+      <div class="panel-city-name" id="panel-city-name">—</div>
+      <div class="panel-country" id="panel-country">—</div>
+    </div>
+    <div class="panel-stats">
+      <div class="pstat">
+        <div class="pstat-val" id="panel-mean">—</div>
+        <div class="pstat-lbl">Cluster mean ppm</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-val" id="panel-range">—</div>
+        <div class="pstat-lbl">Min → Max</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-val" id="panel-pts">—</div>
+        <div class="pstat-lbl">Points in cluster</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-val" id="panel-time">—</div>
+        <div class="pstat-lbl">Timestamp</div>
+      </div>
+    </div>
+    <div class="panel-divider"></div>
+    <div>
+      <div class="panel-mini-chart-label">Monthly city avg XCO₂</div>
+      <canvas id="panel-mini-chart"></canvas>
+    </div>
+    <div class="panel-close-hint">Click elsewhere to dismiss</div>
+  </div>
+
+</div><!-- #globe-wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/p5@1.9.4/lib/p5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="sketch.js"></script>
+</body>
+</html>
