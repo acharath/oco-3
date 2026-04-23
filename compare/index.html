@@ -19,6 +19,22 @@ body{display:flex}
 /* ── Sidebar ─────────────────────────────────────────────── */
 .sb{width:248px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--b1);
   display:flex;flex-direction:column;overflow:hidden}
+.sb.dragging{user-select:none}
+.sb.slim .sb-head p,.sb.slim .sb-lbl-hint,.sb.slim .back-lnk{display:none}
+.sb.slim .sb-sec,.sb.slim .sb-head,.sb.slim .sb-foot{padding-left:10px;padding-right:10px}
+.sb.slim .city-item{gap:5px}
+.sb.slim .ci-country,.sb.slim .ci-co2{display:none}
+.sb.slim .ci-name{font-size:10px}
+.sb-resizer{
+  width:8px;flex-shrink:0;cursor:ew-resize;position:relative;
+  margin-left:-8px;z-index:20;
+  background:linear-gradient(to right, rgba(24,24,24,1), rgba(8,8,8,.2));
+}
+.sb-resizer::after{
+  content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:2px;height:38px;border-radius:2px;background:#2a2a2a;
+}
+.sb-resizer:hover::after{background:#3a3a3a}
 .sb-head{padding:14px 16px 12px;border-bottom:1px solid var(--b1);flex-shrink:0}
 .sb-head h1{font-size:12px;font-weight:700;color:#fff;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
 .sb-head p{font-size:9px;color:var(--t3);letter-spacing:.08em}
@@ -138,6 +154,7 @@ body{display:flex}
 .sc-sel{background:#0d0d0d;border:1px solid #222;color:#ccc;padding:3px 5px;
   font-size:10px;border-radius:3px;outline:none;cursor:pointer;font-family:inherit;
   max-width:160px}
+.sc-col-block{display:inline-flex;align-items:center;gap:8px}
 
 /* Pulse link overlay */
 #plink{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:10;
@@ -194,6 +211,7 @@ body{display:flex}
     <a class="back-lnk" href="../index.html">&#x2190; back to home</a>
   </div>
 </aside>
+<div class="sb-resizer" id="sb-resizer" title="Drag to resize sidebar"></div>
 
 <div class="stage" id="stage">
   <canvas id="cv"></canvas>
@@ -237,14 +255,16 @@ body{display:flex}
       <option value="gdp">GDP</option>
       <option value="uniform">Uniform</option>
     </select>
-    <span class="sc-sep">&#x2014;</span>
-    <span class="sc-lbl">Color</span>
-    <select class="sc-sel" id="sc-col">
-      <option value="xco2avg">XCO&#x2082;</option>
-      <option value="sif">SIF</option>
-      <option value="pop">Population</option>
-      <option value="co2emit">Emissions</option>
-    </select>
+    <span class="sc-col-block" id="sc-col-block">
+      <span class="sc-sep">&#x2014;</span>
+      <span class="sc-lbl">Color</span>
+      <select class="sc-sel" id="sc-col">
+        <option value="xco2avg">XCO&#x2082;</option>
+        <option value="sif">SIF</option>
+        <option value="pop">Population</option>
+        <option value="co2emit">Emissions</option>
+      </select>
+    </span>
   </div>
   <a id="plink" href="../timeseries/index.html">
     <span class="pl-lbl">Open in Timeseries Explorer</span>
@@ -272,6 +292,47 @@ let lastDrag=0, arId=null;
 const cv=document.getElementById("cv");
 const ctx=cv.getContext("2d");
 const DPR=Math.min(window.devicePixelRatio||1,2);
+const sb=document.querySelector(".sb");
+const sbResizer=document.getElementById("sb-resizer");
+
+function setupSidebarResize(){
+  if(!sb||!sbResizer) return;
+  const MIN_SB=0;
+  const MAX_SB=460;
+  const SLIM_SB=128;
+  let startX=0,startW=0,dragging=false;
+
+  function applySidebarWidth(w){
+    const clamped=Math.max(MIN_SB,Math.min(MAX_SB,w));
+    sb.style.width=clamped+"px";
+    sb.classList.toggle("slim",clamped<SLIM_SB);
+  }
+
+  sbResizer.addEventListener("pointerdown",(e)=>{
+    dragging=true;
+    startX=e.clientX;
+    startW=sb.getBoundingClientRect().width;
+    sb.classList.add("dragging");
+    sbResizer.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+
+  sbResizer.addEventListener("pointermove",(e)=>{
+    if(!dragging) return;
+    applySidebarWidth(startW+(e.clientX-startX));
+    resize();
+  });
+
+  function stopDrag(e){
+    if(!dragging) return;
+    dragging=false;
+    sb.classList.remove("dragging");
+    if(e&&sbResizer.hasPointerCapture(e.pointerId)) sbResizer.releasePointerCapture(e.pointerId);
+  }
+
+  sbResizer.addEventListener("pointerup",stopDrag);
+  sbResizer.addEventListener("pointercancel",stopDrag);
+}
 
 function resize(){
   const st=document.getElementById("stage");
@@ -293,13 +354,14 @@ const PAL = [
 ];
 
 // ── VIEW NAMES ────────────────────────────────────────────────────
-const VIEWS = ['Globe','Comparison','Pulse / Timeline','','Scatter'];
+const VIEWS = ['Globe','Comparison','Pulse / Timeline','','Scatter','Quadrant'];
 const VHINTS = [
   'Rotating globe — click a city to select it',
   'Comparison map — size = XCO₂ deviation, colour = CO₂/SIF split',
   'Pulse & Timeline — timeseries + heatgrid for selected cities',
   '',
-  'Scatter plot — customisable axes'
+  'Scatter plot — customisable axes',
+  'Quadrant view — 4-category median split'
 ];
 
 // ── YEAR / MONTH HELPERS ──────────────────────────────────────────
@@ -359,7 +421,7 @@ let S = {
   v2mode: 'pulse',
   v2timelineMetric: 'raw',
   drag:   {on:false},
-  scat:   {x:'gdp', y:'co2emit', sz:'pop', col:'xco2avg'},
+  scat:   {x:'xco2avg', y:'sif', sz:'pop', col:'xco2avg'},
   _pulseGeom: null,
   _v2tog:     null,
   _v2tlTog:   null,
@@ -886,12 +948,16 @@ function drawDots(proj,opts={}){
     const sv=mo
       ?((SIF_MONTHLY[name]||{})[mo]??_sifSim(c.lat,mo))
       :getSIF(name,filtMo(name));
-    const grd=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],r*2.4);
-    grd.addColorStop(0,ha(col,.18)); grd.addColorStop(1,ha(col,0));
-    ctx.beginPath(); ctx.arc(p[0],p[1],r*2.4,0,TAU); ctx.fillStyle=grd; ctx.fill();
+    const glowOuter=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],r*3.1);
+    glowOuter.addColorStop(0,ha(col,.20)); glowOuter.addColorStop(.45,ha(col,.08)); glowOuter.addColorStop(1,ha(col,0));
+    ctx.beginPath(); ctx.arc(p[0],p[1],r*3.1,0,TAU); ctx.fillStyle=glowOuter; ctx.fill();
+    const glowInner=ctx.createRadialGradient(p[0],p[1],0,p[0],p[1],r*1.45);
+    glowInner.addColorStop(0,ha(col,.22)); glowInner.addColorStop(1,ha(col,0));
+    ctx.beginPath(); ctx.arc(p[0],p[1],r*1.45,0,TAU); ctx.fillStyle=glowInner; ctx.fill();
     ctx.beginPath(); ctx.arc(p[0],p[1],r,0,TAU);
     ctx.fillStyle=sizeByXco2?sifColorAlpha(sv,.85):col; ctx.fill();
     if(sizeByXco2){ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.stroke();}
+    else {ctx.strokeStyle=ha(col,.95); ctx.lineWidth=1.4; ctx.stroke();}
     if(labels&&!sizeByXco2){
       ctx.font="bold 10.5px Segoe UI,sans-serif";
       ctx.fillStyle=col; ctx.textAlign="left"; ctx.textBaseline="middle";
@@ -1018,7 +1084,7 @@ function drawV0(){
   const sc=Math.min(W,H)*.4;
   if(!S.flat){
     const proj=mkGlobe(W/2,H/2,sc);
-    drawGlobe(proj);
+    drawGlobe(proj,{stars:false});
     drawDots(proj,{selR:7});
     drawMinimap();
   } else {
@@ -1041,7 +1107,7 @@ function drawV1(){
   ctx.clearRect(0,0,W,H);
   const sc=Math.min(W,H)*.4;
   const proj=S.flat?mkFlat(W/2,H/2,W/6.6):mkGlobe(W/2,H/2,sc);
-  if(S.flat) drawFlatMap(proj); else drawGlobe(proj);
+  if(S.flat) drawFlatMap(proj); else drawGlobe(proj,{stars:false});
   // Dim all non-selected
   for(const c of CITY_DATA){
     if(S.sel.includes(c.name)) continue;
@@ -1113,7 +1179,6 @@ function drawV1(){
 // ── VIEW 2: Pulse / Interleaved ───────────────────────────────────
 function drawV2(){
   ctx.clearRect(0,0,W,H);
-  drawStageStars();
   if(!S.sel.length){noDataMsg("Select cities to see the pulse view");return;}
   const n=S.sel.length;
   const gR=Math.min(W*.145,H*.19);
@@ -1668,7 +1733,7 @@ function drawV4(){
   ctx.clearRect(0,0,W,H);
   const {x:xk,y:yk,sz:szk,col:colk}=S.scat;
   const xDef=SCAT_VARS[xk], yDef=SCAT_VARS[yk];
-  const ml=80,mr=22,mt=62,mb=52;
+  const ml=86,mr=120,mt=98,mb=84;
   const pw=W-ml-mr,ph=H-mt-mb;
 
   const cities=scatCities();
@@ -1699,7 +1764,13 @@ function drawV4(){
   // vertical grid
   const xFinite=xVals.filter(v=>v>0||!xDef.log);
   const xLo=d3.min(xFinite)*.85, xHi=d3.max(xFinite)*1.15;
-  const xTicks=xDef.log?niceLogTicks(xLo,xHi):niceLinTicks(d3.min(xFinite),d3.max(xFinite));
+  const xTicksRaw=xDef.log?niceLogTicks(xLo,xHi):niceLinTicks(d3.min(xFinite),d3.max(xFinite));
+  const minXTickPx=90;
+  const xTicks=[]; let lastXTickPx=-Infinity;
+  for(const v of xTicksRaw){
+    const px=xPx(v); if(px==null) continue;
+    if(px-lastXTickPx>=minXTickPx){xTicks.push(v);lastXTickPx=px;}
+  }
   xTicks.forEach(v=>{const px=xPx(v);if(px>ml&&px<ml+pw){ctx.beginPath();ctx.moveTo(px,mt);ctx.lineTo(px,mt+ph);ctx.stroke();}});
   const yFinite=yVals.filter(v=>v>0||!yDef.log);
   const yLo=d3.min(yFinite)*.85, yHi=d3.max(yFinite)*1.15;
@@ -1789,7 +1860,7 @@ function drawV4(){
   {
     const colDef=SCAT_VARS[colk];
     const barH=80, barW=10;
-    const barY=szk==='uniform'?ly+6:ly+110;
+    const barY=Math.max(ly+40, szk==='uniform'?ly+40:ly+110);
     ctx.fillStyle="#888"; ctx.font="8px Segoe UI,sans-serif"; ctx.textAlign="right"; ctx.textBaseline="top";
     ctx.fillText(colDef.short,lx,barY);
     const colValsF=colVals.filter(v=>v!=null);
@@ -1823,10 +1894,180 @@ function drawV4(){
   const needsAhn=AHN_VARS.has(xk)||AHN_VARS.has(yk)||AHN_VARS.has(szk);
   ctx.fillStyle="#666"; ctx.font="8.5px Segoe UI,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="top";
   const src=needsAhn?"OCO-3 SAM + Ahn et al. 2025":"OCO-3 SAM";
-  ctx.fillText(`${cityEntries.length} cities · ${src} · SIF: real OCO-3 data`,ml,8);
+  ctx.fillText(`${cityEntries.length} cities · ${src} · SIF: real OCO-3 data`,ml,mt-44);
 
   ctx.restore();
   drawMinimap(.7);
+}
+
+function drawV5(){
+  ctx.clearRect(0,0,W,H);
+  const {x:xk,y:yk,sz:szk}=S.scat;
+  const xDef=SCAT_VARS[xk], yDef=SCAT_VARS[yk];
+  const baseMl=86, baseMr=24, baseMt=170, baseMb=90;
+  const availW=W-baseMl-baseMr, availH=H-baseMt-baseMb;
+  const side=Math.max(160,Math.min(availW,availH));
+  const ml=baseMl+Math.max(0,(availW-side)/2);
+  const mt=baseMt+Math.max(0,(availH-side)/2);
+  const pw=side, ph=side;
+
+  const cities=CITY_DATA;
+  if(!cities.length){noDataMsg("No data for selected axes in this time range.");return;}
+
+  const cityEntries=cities.map(c=>{
+    const mo=filtMo(c.name);
+    return {c,mo,xv:scatVal(c,xk,mo),yv:scatVal(c,yk,mo),szv:scatVal(c,szk,mo)};
+  }).filter(e=>e.xv!=null&&e.yv!=null);
+  if(!cityEntries.length){noDataMsg("Not enough data for current settings.");return;}
+
+  const xVals=cityEntries.map(e=>e.xv), yVals=cityEntries.map(e=>e.yv);
+  const szVals=cityEntries.map(e=>e.szv).filter(v=>v!=null);
+  const maxSz=d3.max(szVals)||1;
+  const xPx=scatScale(xVals,xDef.log,ml,ml+pw);
+  const yPx_fwd=scatScale(yVals,yDef.log,mt,mt+ph);
+  const yPx=v=>{ const p=yPx_fwd(v); return p==null?null: mt+ph-(p-mt); };
+
+  const xFinite=xVals.filter(v=>v>0||!xDef.log);
+  const yFinite=yVals.filter(v=>v>0||!yDef.log);
+  const xLo=d3.min(xFinite)*.85, xHi=d3.max(xFinite)*1.15;
+  const yLo=d3.min(yFinite)*.85, yHi=d3.max(yFinite)*1.15;
+  const xTicksRaw=xDef.log?niceLogTicks(xLo,xHi):niceLinTicks(d3.min(xFinite),d3.max(xFinite));
+  const minXTickPx=90;
+  const xTicks=[]; let lastXTickPx=-Infinity;
+  for(const v of xTicksRaw){
+    const px=xPx(v); if(px==null) continue;
+    if(px-lastXTickPx>=minXTickPx){xTicks.push(v);lastXTickPx=px;}
+  }
+  const yTicks=yDef.log?niceLogTicks(yLo,yHi):niceLinTicks(d3.min(yFinite),d3.max(yFinite));
+
+  const xMid=d3.median(xVals), yMid=d3.median(yVals);
+  const xMidPx=xPx(xMid), yMidPx=yPx(yMid);
+  if(xMidPx==null||yMidPx==null) return;
+
+  const xNm=xDef.short||xDef.label;
+  const yNm=yDef.short||yDef.label;
+  const qStyles={
+    HH:{col:'rgba(255,138,76,0.86)',lbl:`High ${yNm}, High ${xNm}`},
+    HL:{col:'rgba(226,97,196,0.86)',lbl:`High ${yNm}, Low ${xNm}`},
+    LH:{col:'rgba(0,219,190,0.86)',lbl:`Low ${yNm}, High ${xNm}`},
+    LL:{col:'rgba(87,143,255,0.86)',lbl:`Low ${yNm}, Low ${xNm}`}
+  };
+  const qKey=(xv,yv)=>(yv>=yMid?'H':'L')+(xv>=xMid?'H':'L');
+  const qCounts={HH:0,HL:0,LH:0,LL:0};
+  cityEntries.forEach(e=>qCounts[qKey(e.xv,e.yv)]++);
+
+  ctx.save();
+  ctx.strokeStyle="#111"; ctx.lineWidth=.5; ctx.setLineDash([3,6]);
+  xTicks.forEach(v=>{const px=xPx(v);if(px>ml&&px<ml+pw){ctx.beginPath();ctx.moveTo(px,mt);ctx.lineTo(px,mt+ph);ctx.stroke();}});
+  yTicks.forEach(v=>{const py=yPx(v);if(py>mt&&py<mt+ph){ctx.beginPath();ctx.moveTo(ml,py);ctx.lineTo(ml+pw,py);ctx.stroke();}});
+  ctx.setLineDash([]);
+
+  ctx.strokeStyle="#282828"; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(ml,mt); ctx.lineTo(ml,mt+ph); ctx.lineTo(ml+pw,mt+ph); ctx.stroke();
+
+  ctx.fillStyle="#999"; ctx.font="9px Segoe UI,sans-serif";
+  xTicks.forEach(v=>{
+    const px=xPx(v); if(px<=ml||px>ml+pw) return;
+    ctx.beginPath();ctx.moveTo(px,mt+ph);ctx.lineTo(px,mt+ph+3);ctx.strokeStyle="#333";ctx.lineWidth=.8;ctx.stroke();
+    ctx.textAlign="center"; ctx.textBaseline="top";
+    const lbl=xDef.log&&v>=1000?v>=1e6?(v/1e6).toFixed(0)+'M':(v/1000).toFixed(0)+'k':xDef.fmt(v);
+    ctx.fillText(lbl,px,mt+ph+5);
+  });
+  yTicks.forEach(v=>{
+    const py=yPx(v); if(py<=mt||py>mt+ph) return;
+    ctx.beginPath();ctx.moveTo(ml-3,py);ctx.lineTo(ml,py);ctx.strokeStyle="#333";ctx.lineWidth=.8;ctx.stroke();
+    ctx.textAlign="right"; ctx.textBaseline="middle";
+    const lbl=yDef.log&&v>=1000?v>=1e6?(v/1e6).toFixed(0)+'M':(v/1000).toFixed(0)+'k':yDef.fmt(v);
+    ctx.fillText(lbl,ml-5,py);
+  });
+
+  ctx.fillStyle="#aaa"; ctx.font="10px Segoe UI,sans-serif";
+  ctx.textAlign="center"; ctx.textBaseline="top";
+  ctx.fillText(xDef.label+(xDef.log?' [log]':''),ml+pw/2,mt+ph+22);
+  ctx.save(); ctx.translate(14,mt+ph/2); ctx.rotate(-Math.PI/2);
+  ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.fillText(yDef.label+(yDef.log?' [log]':''),0,0);
+  ctx.restore();
+
+  for(const {c,xv,yv,szv} of cityEntries){
+    const isSel=S.sel.includes(c.name), isHov=S.hover===c.name;
+    if(isSel||isHov) continue;
+    const px=xPx(xv), py=yPx(yv); if(px==null||py==null) continue;
+    const r=szk==='uniform'?4.2:(szv!=null?2.4+8.2*Math.sqrt(Math.max(0,szv/maxSz)):3.2);
+    const q=qKey(xv,yv);
+    ctx.beginPath(); ctx.arc(px,py,r,0,TAU);
+    const dark=qStyles[q].col.replace(/0\.\d+\)/,'0.20)');
+    ctx.fillStyle=dark;
+    ctx.fill();
+  }
+  for(const {c,xv,yv,szv} of cityEntries){
+    const isSel=S.sel.includes(c.name), isHov=S.hover===c.name;
+    if(!isSel&&!isHov) continue;
+    const px=xPx(xv), py=yPx(yv); if(px==null||py==null) continue;
+    const r=szk==='uniform'?6.8:(szv!=null?4.8+13.5*Math.sqrt(Math.max(0,szv/maxSz)):5.8);
+    const q=qKey(xv,yv);
+    const halo=ctx.createRadialGradient(px,py,0,px,py,r*2.6);
+    halo.addColorStop(0,ha("#dcedff",isHov?0.34:0.28));
+    halo.addColorStop(0.45,ha("#dcedff",isHov?0.14:0.10));
+    halo.addColorStop(1,ha("#cfe0ff",0));
+    ctx.beginPath();
+    ctx.arc(px,py,r*2.6,0,TAU);
+    ctx.fillStyle=halo;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(px,py,r,0,TAU);
+    ctx.fillStyle=qStyles[q].col;
+    ctx.fill();
+    ctx.strokeStyle=isHov?"rgba(250,250,255,0.95)":"rgba(240,245,255,0.78)";
+    ctx.lineWidth=isHov?1.8:1.2;
+    ctx.stroke();
+    ctx.font="bold 10px Segoe UI,sans-serif";
+    ctx.fillStyle="#e6eefc"; ctx.textAlign="left"; ctx.textBaseline="bottom";
+    ctx.fillText(c.name,px+r+3,py);
+  }
+
+  ctx.setLineDash([6,5]);
+  ctx.strokeStyle="rgba(170,170,170,.55)";
+  ctx.lineWidth=1.1;
+  ctx.beginPath(); ctx.moveTo(xMidPx,mt); ctx.lineTo(xMidPx,mt+ph); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ml,yMidPx); ctx.lineTo(ml+pw,yMidPx); ctx.stroke();
+  ctx.setLineDash([]);
+
+  const infoY=72;
+  const lgPad=7, chipH=13, chipGap=6;
+  const availTopW=Math.max(260,pw);
+  const cols=availTopW>620?4:2;
+  const rows=Math.ceil(4/cols);
+  const legendW=availTopW;
+  const chipW=Math.floor((legendW-lgPad*2-chipGap*(cols-1))/cols);
+  const legendH=18 + rows*chipH + (rows-1)*chipGap + lgPad*2 + 10;
+  const lx=ml, ly=88;
+  ctx.fillStyle="rgba(8,8,8,.88)";
+  ctx.strokeStyle="#222";
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.roundRect(lx,ly,legendW,legendH,4);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle="#aaa"; ctx.font="bold 9px Segoe UI,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="top";
+  ctx.fillText("QUADRANT GROUPS",lx+lgPad,ly+4);
+  const order=['HH','HL','LH','LL'];
+  order.forEach((k,i)=>{
+    const row=Math.floor(i/cols), col=i%cols;
+    const x=lx+lgPad+col*(chipW+chipGap), y=ly+18+row*(chipH+chipGap);
+    ctx.fillStyle=qStyles[k].col; ctx.fillRect(x,y+2,10,10);
+    ctx.strokeStyle="#2c2c2c"; ctx.lineWidth=.8; ctx.strokeRect(x,y+2,10,10);
+    ctx.fillStyle="#9a9a9a"; ctx.font="8.5px Segoe UI,sans-serif";
+    ctx.fillText(`${qStyles[k].lbl} (${qCounts[k]})`,x+16,y);
+  });
+  ctx.fillStyle="#777"; ctx.font="8px Segoe UI,sans-serif"; ctx.textAlign="left";
+  ctx.fillText(`Split at medians: ${xNm}=${xDef.fmt(xMid)}, ${yNm}=${yDef.fmt(yMid)}`,lx+lgPad,ly+legendH-11);
+
+  const needsAhn=AHN_VARS.has(xk)||AHN_VARS.has(yk)||AHN_VARS.has(szk);
+  const src=needsAhn?"OCO-3 SAM + Ahn et al. 2025":"OCO-3 SAM";
+  ctx.fillStyle="#666"; ctx.font="8.5px Segoe UI,sans-serif"; ctx.textAlign="left";
+  ctx.fillText(`${cityEntries.length} cities · ${src} · Quadrant categories`,ml,infoY);
+  ctx.restore();
 }
 
 function noDataMsg(msg){
@@ -1840,7 +2081,7 @@ function drawV1SplitCircle(){
   ctx.clearRect(0,0,W,H);
   const sc=Math.min(W,H)*.4;
   const proj=S.flat?mkFlat(W/2,H/2,W/6.6):mkGlobe(W/2,H/2,sc);
-  if(S.flat) drawFlatMap(proj); else drawGlobe(proj);
+  if(S.flat) drawFlatMap(proj); else drawGlobe(proj,{stars:false});
 
   // Dim all non-selected
   for(const c of CITY_DATA){
@@ -1964,7 +2205,7 @@ function render(){
   if(!W||!H) return;
   switch(S.view){
     case 0:drawV0();break; case 1:drawV1SplitCircle();break; case 2:drawV2();break;
-    case 3:drawV3();break; case 4:drawV4();break;
+    case 3:drawV3();break; case 4:drawV4();break; case 5:drawV5();break;
   }
   updateOverlays();
 }
@@ -2013,9 +2254,11 @@ function updateOverlays(){
   cv.style.cursor=(S.view<=1)?"grab":"default";
   document.getElementById("plink").style.display=(S.view===2)?"flex":"none";
   const sc=document.getElementById("scat-ctrl");
-  if(sc) sc.classList.toggle("on",S.view===4);
+  if(sc) sc.classList.toggle("on",S.view===4||S.view===5);
+  const scCol=document.getElementById("sc-col-block");
+  if(scCol) scCol.style.display=(S.view===5)?"none":"inline-flex";
   // hide vhdr when scatter controls are shown (they overlap)
-  if(vh) vh.style.display=(S.view===4)?"none":"block";
+  if(vh) vh.style.display=(S.view===4||S.view===5)?"none":"block";
   document.querySelectorAll(".dot").forEach(d=>d.classList.toggle("on",+d.dataset.v===S.view));
   document.querySelectorAll(".vb").forEach(b=>b.classList.toggle("on",+b.dataset.v===S.view));
 }
@@ -2034,12 +2277,23 @@ function getProj(){
 function hitTest(ex,ey){
   const rect=cv.getBoundingClientRect();
   const mx=ex-rect.left, my=ey-rect.top;
-  if(S.view===4){
+  if(S.view===4||S.view===5){
     const {x:xk,y:yk,sz:szk}=S.scat;
     const xDef=SCAT_VARS[xk], yDef=SCAT_VARS[yk];
-    const ml=80,mr=22,mt=62,mb=52;
-    const pw=W-ml-mr, ph=H-mt-mb;
-    const cities=scatCities();
+    let ml, mt, pw, ph;
+    if(S.view===5){
+      const baseMl=86, baseMr=24, baseMt=118, baseMb=76;
+      const availW=W-baseMl-baseMr, availH=H-baseMt-baseMb;
+      const side=Math.max(160,Math.min(availW,availH));
+      ml=baseMl+Math.max(0,(availW-side)/2);
+      mt=baseMt+Math.max(0,(availH-side)/2);
+      pw=side; ph=side;
+    } else {
+      const mr=120, mb=84;
+      ml=86; mt=98;
+      pw=W-ml-mr; ph=H-mt-mb;
+    }
+    const cities=S.view===5?CITY_DATA:scatCities();
     const entries=cities.map(c=>{
       const mo=filtMo(c.name);
       return{c,mo,xv:scatVal(c,xk,mo),yv:scatVal(c,yk,mo),szv:scatVal(c,szk,mo)};
@@ -2334,7 +2588,7 @@ function buildYearSelects(){
 
 // ── VIEW NAV ──────────────────────────────────────────────────────
 function setView(v){
-  v=Math.max(0,Math.min(4,v));
+  v=Math.max(0,Math.min(5,v));
   // Timeline tab is merged into Pulse (view 2)
   if(v===3) v = (S.view<=2?4:2);
   if(v===S.view) return;
@@ -2369,7 +2623,7 @@ window.addEventListener("keydown",e=>{
 
 function buildDots(){
   const el=document.getElementById("dots"); el.innerHTML="";
-  [0,1,2,4].forEach(i=>{
+  [0,1,2,4,5].forEach(i=>{
     const d=document.createElement("div");
     d.dataset.v=i;
     d.className="dot"+(i===0?" on":""); d.title=VIEWS[i];
@@ -2391,6 +2645,7 @@ DEFAULT_SEL.forEach(n=>addCity(n));
 buildDots(); buildVGrid(); buildYearSelects();
 buildCityList();
 updateMonthsHint();
+setupSidebarResize();
 resize();
 window.addEventListener("resize",resize);
 requestAnimationFrame(animTick);
