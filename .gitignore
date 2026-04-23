@@ -1,0 +1,4 @@
+.env
+.venv
+co2_sam.csv
+sif_sam.csv

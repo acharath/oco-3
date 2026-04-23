@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CO₂ City Timeseries</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       background: #050505;
@@ -27,6 +34,7 @@
       flex-shrink: 0;
       background: #080808;
     }
+
     header h1 {
       font-size: 14px;
       font-weight: 600;
@@ -35,6 +43,7 @@
       text-transform: uppercase;
       white-space: nowrap;
     }
+
     .prog-wrap {
       flex: 1;
       max-width: 260px;
@@ -43,13 +52,20 @@
       border-radius: 2px;
       overflow: hidden;
     }
+
     #prog {
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, #00f5ff, #bf00ff);
       transition: width 0.15s linear;
     }
-    #prog-text { font-size: 11px; color: #555; white-space: nowrap; }
+
+    #prog-text {
+      font-size: 11px;
+      color: #555;
+      white-space: nowrap;
+    }
+
     .header-link {
       margin-left: auto;
       font-size: 11px;
@@ -57,10 +73,17 @@
       text-decoration: none;
       white-space: nowrap;
     }
-    .header-link:hover { color: #888; }
+
+    .header-link:hover {
+      color: #888;
+    }
 
     /* ── Layout ── */
-    .main { display: flex; flex: 1; overflow: hidden; }
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
 
     /* ── Left sidebar: cities ── */
     .sidebar {
@@ -72,11 +95,13 @@
       overflow: hidden;
       background: #060606;
     }
+
     .sb-head {
       padding: 10px 12px 8px;
       border-bottom: 1px solid #111;
       flex-shrink: 0;
     }
+
     .sb-head h2 {
       font-size: 9px;
       color: #444;
@@ -84,6 +109,7 @@
       letter-spacing: 0.12em;
       margin-bottom: 7px;
     }
+
     #search {
       width: 100%;
       background: #0d0d0d;
@@ -95,8 +121,15 @@
       outline: none;
       font-family: inherit;
     }
-    #search::placeholder { color: #383838; }
-    #search:focus { border-color: #2a2a2a; }
+
+    #search::placeholder {
+      color: #383838;
+    }
+
+    #search:focus {
+      border-color: #2a2a2a;
+    }
+
     .sb-actions {
       padding: 5px 12px;
       display: flex;
@@ -105,6 +138,7 @@
       border-bottom: 1px solid #111;
       flex-shrink: 0;
     }
+
     .btn {
       font-size: 10px;
       padding: 3px 8px;
@@ -118,13 +152,36 @@
       font-family: inherit;
       transition: background 0.1s, color 0.1s;
     }
-    .btn:hover { background: #1a1a1a; color: #eee; }
-    #sel-count { margin-left: auto; font-size: 10px; color: #383838; }
 
-    #city-list { flex: 1; overflow-y: auto; padding: 4px 0; }
-    #city-list::-webkit-scrollbar { width: 3px; }
-    #city-list::-webkit-scrollbar-track { background: transparent; }
-    #city-list::-webkit-scrollbar-thumb { background: #1e1e1e; border-radius: 2px; }
+    .btn:hover {
+      background: #1a1a1a;
+      color: #eee;
+    }
+
+    #sel-count {
+      margin-left: auto;
+      font-size: 10px;
+      color: #383838;
+    }
+
+    #city-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    #city-list::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    #city-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #city-list::-webkit-scrollbar-thumb {
+      background: #1e1e1e;
+      border-radius: 2px;
+    }
 
     .city-row {
       display: flex;
@@ -135,19 +192,41 @@
       user-select: none;
       transition: background 0.08s;
     }
-    .city-row:hover { background: #0d0d0d; }
-    .city-row.on { background: #09130f; }
-    .dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-      opacity: 0.2; transition: opacity 0.15s, box-shadow 0.15s;
+
+    .city-row:hover {
+      background: #0d0d0d;
     }
-    .city-row.on .dot { opacity: 1; box-shadow: 0 0 5px currentColor; }
+
+    .city-row.on {
+      background: #09130f;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      opacity: 0.2;
+      transition: opacity 0.15s, box-shadow 0.15s;
+    }
+
+    .city-row.on .dot {
+      opacity: 1;
+      box-shadow: 0 0 5px currentColor;
+    }
+
     .cname {
-      font-size: 11.5px; color: #777;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      font-size: 11.5px;
+      color: #777;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       transition: color 0.1s;
     }
-    .city-row.on .cname { color: #ddd; }
+
+    .city-row.on .cname {
+      color: #ddd;
+    }
 
     /* ── Chart area ── */
     .chart-area {
@@ -158,6 +237,7 @@
       flex-direction: column;
       gap: 8px;
     }
+
     .chart-meta {
       display: flex;
       align-items: center;
@@ -165,6 +245,7 @@
       flex-shrink: 0;
       min-height: 16px;
     }
+
     .legend-item {
       display: flex;
       align-items: center;
@@ -172,31 +253,55 @@
       font-size: 10px;
       color: #555;
     }
+
     .legend-dash {
-      width: 18px; height: 2px;
-      background: rgba(255,255,255,0.7); border-radius: 1px; position: relative;
+      width: 18px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 1px;
+      position: relative;
     }
+
     .legend-dash::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: repeating-linear-gradient(
-        90deg,
-        rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 5px,
-        transparent 5px, transparent 9px
-      );
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(90deg,
+          rgba(255, 255, 255, 0.8) 0px, rgba(255, 255, 255, 0.8) 5px,
+          transparent 5px, transparent 9px);
     }
+
     .legend-band-swatch {
-      width: 18px; height: 8px;
-      background: rgba(255,255,255,0.1); border-radius: 1px;
+      width: 18px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 1px;
     }
-    .chart-wrap { flex: 1; position: relative; min-height: 0; }
-    #myChart { width: 100% !important; height: 100% !important; }
+
+    .chart-wrap {
+      flex: 1;
+      position: relative;
+      min-height: 0;
+    }
+
+    #myChart {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
     .hint {
-      position: absolute; top: 50%; left: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
       transform: translate(-50%, -50%);
-      color: #1e1e1e; font-size: 14px;
-      text-align: center; pointer-events: none; line-height: 1.6;
+      color: #1e1e1e;
+      font-size: 14px;
+      text-align: center;
+      pointer-events: none;
+      line-height: 1.6;
     }
 
     /* ── Right panel: latitude bands ── */
@@ -209,11 +314,13 @@
       overflow: hidden;
       background: #060606;
     }
+
     .bp-head {
       padding: 10px 12px 8px;
       border-bottom: 1px solid #111;
       flex-shrink: 0;
     }
+
     .bp-head h2 {
       font-size: 9px;
       color: #444;
@@ -221,7 +328,11 @@
       letter-spacing: 0.12em;
       margin-bottom: 2px;
     }
-    .bp-sub { font-size: 10px; color: #2d2d2d; }
+
+    .bp-sub {
+      font-size: 10px;
+      color: #2d2d2d;
+    }
 
     /* Visual globe-slice */
     .bp-globe-wrap {
@@ -231,12 +342,25 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    #band-globe { display: block; cursor: default; }
+
+    #band-globe {
+      display: block;
+      cursor: default;
+    }
 
     /* Band toggle rows */
-    #band-list { flex: 1; overflow-y: auto; }
-    #band-list::-webkit-scrollbar { width: 3px; }
-    #band-list::-webkit-scrollbar-thumb { background: #1e1e1e; }
+    #band-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    #band-list::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    #band-list::-webkit-scrollbar-thumb {
+      background: #1e1e1e;
+    }
 
     .band-row {
       padding: 7px 12px;
@@ -245,8 +369,14 @@
       transition: background 0.08s;
       border-bottom: 1px solid #0c0c0c;
     }
-    .band-row:hover { background: #0d0d0d; }
-    .band-row.on { background: #080f0d; }
+
+    .band-row:hover {
+      background: #0d0d0d;
+    }
+
+    .band-row.on {
+      background: #080f0d;
+    }
 
     .band-row-top {
       display: flex;
@@ -254,689 +384,722 @@
       gap: 7px;
       margin-bottom: 2px;
     }
+
     .band-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-      opacity: 0.2; transition: opacity 0.15s, box-shadow 0.15s;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      opacity: 0.2;
+      transition: opacity 0.15s, box-shadow 0.15s;
     }
-    .band-row.on .band-dot { opacity: 1; box-shadow: 0 0 6px currentColor; }
+
+    .band-row.on .band-dot {
+      opacity: 1;
+      box-shadow: 0 0 6px currentColor;
+    }
+
     .band-label {
-      font-size: 11.5px; color: #777; transition: color 0.1s;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-size: 11.5px;
+      color: #777;
+      transition: color 0.1s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .band-row.on .band-label { color: #ddd; }
+
+    .band-row.on .band-label {
+      color: #ddd;
+    }
+
     .band-range {
-      font-size: 9px; color: #252525;
+      font-size: 9px;
+      color: #252525;
       padding-left: 15px;
       transition: color 0.1s;
     }
-    .band-row.on .band-range { color: #3a3a3a; }
+
+    .band-row.on .band-range {
+      color: #3a3a3a;
+    }
 
     /* Dashed line swatch next to each band name (shows line style) */
     .band-line-swatch {
-      width: 16px; height: 2px; flex-shrink: 0;
-      background: repeating-linear-gradient(
-        90deg,
-        currentColor 0px, currentColor 5px,
-        transparent 5px, transparent 9px
-      );
-      opacity: 0.35; margin-left: auto;
+      width: 16px;
+      height: 2px;
+      flex-shrink: 0;
+      background: repeating-linear-gradient(90deg,
+          currentColor 0px, currentColor 5px,
+          transparent 5px, transparent 9px);
+      opacity: 0.35;
+      margin-left: auto;
       transition: opacity 0.15s;
     }
-    .band-row.on .band-line-swatch { opacity: 1; }
+
+    .band-row.on .band-line-swatch {
+      opacity: 1;
+    }
   </style>
 </head>
+
 <body>
 
-<header>
-  <h1>CO₂ City Timeseries</h1>
-  <div class="prog-wrap"><div id="prog"></div></div>
-  <span id="prog-text">Loading data…</span>
-  <a class="header-link" href="../index.html">← Back</a>
-</header>
-
-<div class="main">
-
-  <!-- Left: city picker -->
-  <aside class="sidebar">
-    <div class="sb-head">
-      <h2>Cities</h2>
-      <input id="search" type="text" placeholder="Filter cities…" autocomplete="off">
+  <header>
+    <h1>CO₂ City Timeseries</h1>
+    <div class="prog-wrap">
+      <div id="prog"></div>
     </div>
-    <div class="sb-actions">
-      <button class="btn" id="btn-clear">Clear</button>
-      <button class="btn" id="btn-sample">Random 6</button>
-      <span id="sel-count">0 selected</span>
-    </div>
-    <div id="city-list"></div>
-  </aside>
+    <span id="prog-text">Loading data…</span>
+    <a class="header-link" href="../index.html">← Back</a>
+  </header>
 
-  <!-- Center: chart -->
-  <div class="chart-area">
-    <div class="chart-meta">
-      <div class="legend-item">
-        <div class="legend-dash"></div>
-        <span>Avg of selected cities</span>
+  <div class="main">
+
+    <!-- Left: city picker -->
+    <aside class="sidebar">
+      <div class="sb-head">
+        <h2>Cities</h2>
+        <input id="search" type="text" placeholder="Filter cities…" autocomplete="off">
       </div>
-      <div class="legend-item">
-        <div class="legend-band-swatch"></div>
-        <span>±1 std dev</span>
+      <div class="sb-actions">
+        <button class="btn" id="btn-clear">Clear</button>
+        <button class="btn" id="btn-sample">Random 4</button>
+        <span id="sel-count">0 selected</span>
+      </div>
+      <div id="city-list"></div>
+    </aside>
+
+    <!-- Center: chart -->
+    <div class="chart-area">
+      <div class="chart-meta">
+        <div class="legend-item">
+          <div class="legend-dash"></div>
+          <span>Avg of selected cities</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-band-swatch"></div>
+          <span>±1 std dev</span>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <p class="hint" id="hint">Select cities on the left<br>or toggle lat bands on the right</p>
+        <canvas id="myChart"></canvas>
       </div>
     </div>
-    <div class="chart-wrap">
-      <p class="hint" id="hint">Select cities on the left<br>or toggle lat bands on the right</p>
-      <canvas id="myChart"></canvas>
-    </div>
-  </div>
 
-  <!-- Right: latitude bands -->
-  <aside class="band-panel">
-    <div class="bp-head">
-      <h2>Latitude Bands</h2>
-      <p class="bp-sub">Toggle regional averages</p>
-    </div>
-    <div class="bp-globe-wrap">
-      <canvas id="band-globe" width="156" height="112"></canvas>
-    </div>
-    <div id="band-list"></div>
-  </aside>
+    <!-- Right: latitude bands -->
+    <aside class="band-panel">
+      <div class="bp-head">
+        <h2>Latitude Bands</h2>
+        <p class="bp-sub">Toggle regional averages</p>
+      </div>
+      <div class="bp-globe-wrap">
+        <canvas id="band-globe" width="156" height="112"></canvas>
+      </div>
+      <div id="band-list"></div>
+    </aside>
 
-</div><!-- .main -->
+  </div><!-- .main -->
 
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-<script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script>
 
-/* ─── Band definitions ───────────────────────────────────────────── */
+    /* ─── Band definitions ───────────────────────────────────────────── */
 
-const BANDS = [
-  { key: 'arctic',    label: 'Arctic',          range: '60°N – 90°N', latMin:  60, latMax:  90, color: '#93d5f7' },
-  { key: 'mid_north', label: 'N. Mid-latitudes', range: '30°N – 60°N', latMin:  30, latMax:  60, color: '#5b8ff9' },
-  { key: 'tropics',   label: 'Tropics',          range: '30°S – 30°N', latMin: -30, latMax:  30, color: '#ffc444' },
-  { key: 'mid_south', label: 'S. Mid-latitudes', range: '30°S – 60°S', latMin: -60, latMax: -30, color: '#29d8a8' },
-  { key: 'antarctic', label: 'Antarctic',        range: '60°S – 90°S', latMin: -90, latMax: -60, color: '#be8fff' },
-];
+    const BANDS = [
+      { key: 'arctic', label: 'Arctic', range: '60°N – 90°N', latMin: 60, latMax: 90, color: '#93d5f7' },
+      { key: 'mid_north', label: 'N. Mid-latitudes', range: '30°N – 60°N', latMin: 30, latMax: 60, color: '#5b8ff9' },
+      { key: 'tropics', label: 'Tropics', range: '30°S – 30°N', latMin: -30, latMax: 30, color: '#ffc444' },
+      { key: 'mid_south', label: 'S. Mid-latitudes', range: '30°S – 60°S', latMin: -60, latMax: -30, color: '#29d8a8' },
+      { key: 'antarctic', label: 'Antarctic', range: '60°S – 90°S', latMin: -90, latMax: -60, color: '#be8fff' },
+    ];
 
-// Raw band data: key -> Map<monthMs, number[]>
-const bandRaw = new Map(BANDS.map(b => [b.key, new Map()]));
-// Precomputed band monthly averages: key -> Map<monthMs, number>
-let bandAvgs = new Map();
-// Which bands are toggled on
-const activeBands = new Set();
+    // Raw band data: key -> Map<monthMs, number[]>
+    const bandRaw = new Map(BANDS.map(b => [b.key, new Map()]));
+    // Precomputed band monthly averages: key -> Map<monthMs, number>
+    let bandAvgs = new Map();
+    // Which bands are toggled on
+    const activeBands = new Set();
 
-/* ─── City constants ─────────────────────────────────────────────── */
+    /* ─── City constants ─────────────────────────────────────────────── */
 
-const PALETTE = [
-  '#00f5ff', '#ff1493', '#39ff14', '#ff6b35',
-  '#bf00ff', '#ffd700', '#ff4466', '#00ffaa',
-  '#ff69b4', '#4dbbff', '#ff8c00', '#7fff00',
-  '#f72585', '#06d6a0', '#ffc300', '#a78bfa',
-];
+    const PALETTE = [
+      '#00f5ff', '#ff1493', '#39ff14', '#ff6b35',
+      '#bf00ff', '#ffd700', '#ff4466', '#00ffaa',
+      '#ff69b4', '#4dbbff', '#ff8c00', '#7fff00',
+      '#f72585', '#06d6a0', '#ffc300', '#a78bfa',
+    ];
 
-const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const DEFAULT_CITY_NAMES = ['Beijing', 'Cairo', 'Bangkok', 'Berlin', 'Buenos Aires', 'Mumbai'];
-const TOTAL_ROWS_ESTIMATE = 6053903;
+    const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const DEFAULT_CITY_NAMES = ['Beijing', 'Cairo', 'Bangkok', 'Berlin', 'Buenos Aires', 'Mumbai'];
+    const TOTAL_ROWS_ESTIMATE = 6053903;
 
-/* ─── City state ─────────────────────────────────────────────────── */
+    /* ─── City state ─────────────────────────────────────────────────── */
 
-const cityData    = new Map();  // cityKey -> Map<monthMs, number[]>
-const cityMeta    = new Map();  // cityKey -> { city, country }
-let sortedCityKeys = [];
-const cityColorIdx = new Map();
-let allMonths = [];
-const selectedCities = new Set();
-let chart = null;
+    const cityData = new Map();  // cityKey -> Map<monthMs, number[]>
+    const cityMeta = new Map();  // cityKey -> { city, country }
+    let sortedCityKeys = [];
+    const cityColorIdx = new Map();
+    let allMonths = [];
+    const selectedCities = new Set();
+    let chart = null;
 
-/* ─── CSV Loading ────────────────────────────────────────────────── */
+    /* ─── CSV Loading ────────────────────────────────────────────────── */
 
-let rowsLoaded = 0;
+    let rowsLoaded = 0;
 
-Papa.parse('../co2_sam (1).csv', {
-  download: true,
-  header: true,
-  dynamicTyping: false,
-  skipEmptyLines: true,
+    Papa.parse('../co2_sam.csv', {
+      download: true,
+      header: true,
+      dynamicTyping: false,
+      skipEmptyLines: true,
 
-  step(results) {
-    const row = results.data;
-    rowsLoaded++;
+      step(results) {
+        const row = results.data;
+        rowsLoaded++;
 
-    if (rowsLoaded % 60000 === 0) {
-      const pct = Math.min((rowsLoaded / TOTAL_ROWS_ESTIMATE) * 100, 99);
-      document.getElementById('prog').style.width = pct + '%';
-      document.getElementById('prog-text').textContent =
-        `Loading… ${(rowsLoaded / 1e6).toFixed(1)}M / ${(TOTAL_ROWS_ESTIMATE / 1e6).toFixed(1)}M rows`;
-    }
-
-    const val    = parseFloat(row.xco2);
-    const lat    = parseFloat(row.latitude);
-    const dtStr  = (row.datetime || '').trim();
-    const city   = (row.city    || '').trim();
-    const country = (row.country || '').trim();
-
-    if (!isFinite(val)) return;
-
-    let t = Date.parse(dtStr);
-    if (!isFinite(t) && dtStr.includes(' ')) t = Date.parse(dtStr.replace(' ', 'T') + 'Z');
-    if (!isFinite(t)) return;
-
-    const d       = new Date(t);
-    const monthMs = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
-
-    // ── Accumulate into lat band (every row with valid lat) ──
-    if (isFinite(lat)) {
-      for (const band of BANDS) {
-        if (lat >= band.latMin && lat < band.latMax) {
-          const bm = bandRaw.get(band.key);
-          if (!bm.has(monthMs)) bm.set(monthMs, []);
-          bm.get(monthMs).push(val);
-          break;
+        if (rowsLoaded % 60000 === 0) {
+          const pct = Math.min((rowsLoaded / TOTAL_ROWS_ESTIMATE) * 100, 99);
+          document.getElementById('prog').style.width = pct + '%';
+          document.getElementById('prog-text').textContent =
+            `Loading… ${(rowsLoaded / 1e6).toFixed(1)}M / ${(TOTAL_ROWS_ESTIMATE / 1e6).toFixed(1)}M rows`;
         }
+
+        const val = parseFloat(row.xco2);
+        const lat = parseFloat(row.latitude);
+        const dtStr = (row.datetime || '').trim();
+        const city = (row.city || '').trim();
+        const country = (row.country || '').trim();
+
+        if (!isFinite(val)) return;
+
+        let t = Date.parse(dtStr);
+        if (!isFinite(t) && dtStr.includes(' ')) t = Date.parse(dtStr.replace(' ', 'T') + 'Z');
+        if (!isFinite(t)) return;
+
+        const d = new Date(t);
+        const monthMs = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
+
+        // ── Accumulate into lat band (every row with valid lat) ──
+        if (isFinite(lat)) {
+          for (const band of BANDS) {
+            if (lat >= band.latMin && lat < band.latMax) {
+              const bm = bandRaw.get(band.key);
+              if (!bm.has(monthMs)) bm.set(monthMs, []);
+              bm.get(monthMs).push(val);
+              break;
+            }
+          }
+        }
+
+        // ── Accumulate into city data (only named cities) ──
+        if (!city || city === 'Unknown') return;
+
+        const cityKey = city + '|||' + country;
+        if (!cityData.has(cityKey)) {
+          cityData.set(cityKey, new Map());
+          cityMeta.set(cityKey, { city, country });
+        }
+        const monthMap = cityData.get(cityKey);
+        if (!monthMap.has(monthMs)) monthMap.set(monthMs, []);
+        monthMap.get(monthMs).push(val);
+      },
+
+      complete() {
+        document.getElementById('prog').style.width = '100%';
+        document.getElementById('prog-text').textContent =
+          `${cityData.size} cities · ${rowsLoaded.toLocaleString()} rows`;
+
+        // Build sorted city list + color index
+        sortedCityKeys = Array.from(cityMeta.keys()).sort((a, b) =>
+          cityMeta.get(a).city.localeCompare(cityMeta.get(b).city)
+        );
+        sortedCityKeys.forEach((k, i) => cityColorIdx.set(k, i));
+
+        // Build global month list from all city data
+        const monthSet = new Set();
+        for (const monthMap of cityData.values())
+          for (const m of monthMap.keys()) monthSet.add(m);
+        allMonths = Array.from(monthSet).sort((a, b) => a - b);
+
+        // Precompute band monthly averages
+        computeBandAvgs();
+
+        renderCityList();
+        renderBandList();
+        drawBandGlobe();
+
+        // Pre-select default cities
+        const defaultLower = DEFAULT_CITY_NAMES.map(s => s.toLowerCase());
+        for (const key of sortedCityKeys) {
+          if (defaultLower.includes(cityMeta.get(key).city.toLowerCase()))
+            selectedCities.add(key);
+        }
+        syncListSelection();
+        updateChart();
+      },
+
+      error(err) {
+        console.error('CSV parse error:', err);
+        document.getElementById('prog-text').textContent = 'Error loading data';
+      }
+    });
+
+    /* ─── Band averages ──────────────────────────────────────────────── */
+
+    function computeBandAvgs() {
+      bandAvgs = new Map();
+      for (const band of BANDS) {
+        const avgs = new Map();
+        for (const [m, vals] of bandRaw.get(band.key)) {
+          avgs.set(m, vals.reduce((s, v) => s + v, 0) / vals.length);
+        }
+        bandAvgs.set(band.key, avgs);
       }
     }
 
-    // ── Accumulate into city data (only named cities) ──
-    if (!city || city === 'Unknown') return;
+    /* ─── Band panel UI ──────────────────────────────────────────────── */
 
-    const cityKey = city + '|||' + country;
-    if (!cityData.has(cityKey)) {
-      cityData.set(cityKey, new Map());
-      cityMeta.set(cityKey, { city, country });
-    }
-    const monthMap = cityData.get(cityKey);
-    if (!monthMap.has(monthMs)) monthMap.set(monthMs, []);
-    monthMap.get(monthMs).push(val);
-  },
+    function renderBandList() {
+      const container = document.getElementById('band-list');
+      container.innerHTML = '';
 
-  complete() {
-    document.getElementById('prog').style.width = '100%';
-    document.getElementById('prog-text').textContent =
-      `${cityData.size} cities · ${rowsLoaded.toLocaleString()} rows`;
+      for (const band of BANDS) {
+        const on = activeBands.has(band.key);
+        const row = document.createElement('div');
+        row.className = 'band-row' + (on ? ' on' : '');
+        row.dataset.key = band.key;
 
-    // Build sorted city list + color index
-    sortedCityKeys = Array.from(cityMeta.keys()).sort((a, b) =>
-      cityMeta.get(a).city.localeCompare(cityMeta.get(b).city)
-    );
-    sortedCityKeys.forEach((k, i) => cityColorIdx.set(k, i));
+        const top = document.createElement('div');
+        top.className = 'band-row-top';
 
-    // Build global month list from all city data
-    const monthSet = new Set();
-    for (const monthMap of cityData.values())
-      for (const m of monthMap.keys()) monthSet.add(m);
-    allMonths = Array.from(monthSet).sort((a, b) => a - b);
+        const dot = document.createElement('div');
+        dot.className = 'band-dot';
+        dot.style.background = band.color;
+        dot.style.color = band.color;
 
-    // Precompute band monthly averages
-    computeBandAvgs();
+        const lbl = document.createElement('span');
+        lbl.className = 'band-label';
+        lbl.textContent = band.label;
 
-    renderCityList();
-    renderBandList();
-    drawBandGlobe();
+        const swatch = document.createElement('div');
+        swatch.className = 'band-line-swatch';
+        swatch.style.color = band.color;
 
-    // Pre-select default cities
-    const defaultLower = DEFAULT_CITY_NAMES.map(s => s.toLowerCase());
-    for (const key of sortedCityKeys) {
-      if (defaultLower.includes(cityMeta.get(key).city.toLowerCase()))
-        selectedCities.add(key);
-    }
-    syncListSelection();
-    updateChart();
-  },
+        top.appendChild(dot);
+        top.appendChild(lbl);
+        top.appendChild(swatch);
 
-  error(err) {
-    console.error('CSV parse error:', err);
-    document.getElementById('prog-text').textContent = 'Error loading data';
-  }
-});
+        const range = document.createElement('div');
+        range.className = 'band-range';
+        range.textContent = band.range;
 
-/* ─── Band averages ──────────────────────────────────────────────── */
-
-function computeBandAvgs() {
-  bandAvgs = new Map();
-  for (const band of BANDS) {
-    const avgs = new Map();
-    for (const [m, vals] of bandRaw.get(band.key)) {
-      avgs.set(m, vals.reduce((s, v) => s + v, 0) / vals.length);
-    }
-    bandAvgs.set(band.key, avgs);
-  }
-}
-
-/* ─── Band panel UI ──────────────────────────────────────────────── */
-
-function renderBandList() {
-  const container = document.getElementById('band-list');
-  container.innerHTML = '';
-
-  for (const band of BANDS) {
-    const on  = activeBands.has(band.key);
-    const row = document.createElement('div');
-    row.className   = 'band-row' + (on ? ' on' : '');
-    row.dataset.key = band.key;
-
-    const top = document.createElement('div');
-    top.className = 'band-row-top';
-
-    const dot = document.createElement('div');
-    dot.className = 'band-dot';
-    dot.style.background = band.color;
-    dot.style.color      = band.color;
-
-    const lbl = document.createElement('span');
-    lbl.className   = 'band-label';
-    lbl.textContent = band.label;
-
-    const swatch = document.createElement('div');
-    swatch.className = 'band-line-swatch';
-    swatch.style.color = band.color;
-
-    top.appendChild(dot);
-    top.appendChild(lbl);
-    top.appendChild(swatch);
-
-    const range = document.createElement('div');
-    range.className   = 'band-range';
-    range.textContent = band.range;
-
-    row.appendChild(top);
-    row.appendChild(range);
-    row.addEventListener('click', () => toggleBand(band.key));
-    container.appendChild(row);
-  }
-}
-
-function toggleBand(key) {
-  if (activeBands.has(key)) activeBands.delete(key);
-  else                       activeBands.add(key);
-
-  document.querySelectorAll('.band-row').forEach(row => {
-    row.classList.toggle('on', activeBands.has(row.dataset.key));
-  });
-  drawBandGlobe();
-  updateChart();
-}
-
-/* ─── Globe-slice visual ─────────────────────────────────────────── */
-
-function drawBandGlobe() {
-  const cnv = document.getElementById('band-globe');
-  if (!cnv) return;
-  const ctx = cnv.getContext('2d');
-  const W = 156, H = 112;
-  ctx.clearRect(0, 0, W, H);
-
-  // Thin vertical pill representing the latitude axis
-  const barW = 22, barH = 90;
-  const bx   = 46;         // leave room for labels on left
-  const by   = (H - barH) / 2;
-  const r    = barW / 2;
-
-  // Clip to rounded rect
-  ctx.save();
-  ctx.beginPath();
-  roundRect(ctx, bx, by, barW, barH, r);
-  ctx.clip();
-
-  // Draw each band (Arctic at top, Antarctic at bottom)
-  const segH = barH / BANDS.length;
-  BANDS.forEach((band, i) => {
-    const on  = activeBands.has(band.key);
-    const y   = by + i * segH;
-    ctx.globalAlpha = on ? 0.9 : 0.12;
-    ctx.fillStyle   = band.color;
-    ctx.fillRect(bx, y, barW, segH + 0.5);
-  });
-
-  ctx.globalAlpha = 1;
-  ctx.restore();
-
-  // Outer border
-  ctx.strokeStyle = '#1e1e1e';
-  ctx.lineWidth   = 1;
-  ctx.beginPath();
-  roundRect(ctx, bx, by, barW, barH, r);
-  ctx.stroke();
-
-  // Segment dividers
-  ctx.strokeStyle = '#050505';
-  ctx.lineWidth   = 0.8;
-  for (let i = 1; i < BANDS.length; i++) {
-    const y = by + i * segH;
-    ctx.beginPath();
-    ctx.moveTo(bx + 1, y);
-    ctx.lineTo(bx + barW - 1, y);
-    ctx.stroke();
-  }
-
-  // Lat labels on the right side
-  const latLabels = ['90°N', '60°N', '30°N', '0°', '30°S', '60°S', '90°S'];
-  ctx.font         = '8px Segoe UI, system-ui, sans-serif';
-  ctx.textAlign    = 'left';
-  ctx.textBaseline = 'middle';
-  latLabels.forEach((lbl, i) => {
-    const y = by + (i / (latLabels.length - 1)) * barH;
-    // tick
-    ctx.strokeStyle = '#1e1e1e';
-    ctx.lineWidth   = 0.8;
-    ctx.beginPath();
-    ctx.moveTo(bx + barW, y);
-    ctx.lineTo(bx + barW + 4, y);
-    ctx.stroke();
-    ctx.fillStyle = '#303030';
-    ctx.fillText(lbl, bx + barW + 6, y);
-  });
-
-  // Band label abbreviations on left
-  ctx.textAlign    = 'right';
-  ctx.textBaseline = 'middle';
-  BANDS.forEach((band, i) => {
-    const on = activeBands.has(band.key);
-    const y  = by + (i + 0.5) * segH;
-    ctx.fillStyle = on ? band.color : '#2a2a2a';
-    ctx.font = on ? 'bold 8px Segoe UI, sans-serif' : '8px Segoe UI, sans-serif';
-    // abbreviation
-    const abbr = { arctic: 'ARC', mid_north: 'NML', tropics: 'TRP', mid_south: 'SML', antarctic: 'ANT' };
-    ctx.fillText(abbr[band.key], bx - 4, y);
-  });
-}
-
-// Polyfill for ctx.roundRect in case of older Chromium
-function roundRect(ctx, x, y, w, h, r) {
-  if (ctx.roundRect) {
-    ctx.roundRect(x, y, w, h, r);
-  } else {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
-    ctx.closePath();
-  }
-}
-
-/* ─── City list UI ───────────────────────────────────────────────── */
-
-function renderCityList(filter = '') {
-  const container = document.getElementById('city-list');
-  container.innerHTML = '';
-  const fl = filter.toLowerCase();
-
-  for (const key of sortedCityKeys) {
-    const meta  = cityMeta.get(key);
-    const label = meta.country ? `${meta.city}, ${meta.country}` : meta.city;
-    if (fl && !label.toLowerCase().includes(fl)) continue;
-
-    const color = PALETTE[cityColorIdx.get(key) % PALETTE.length];
-    const on    = selectedCities.has(key);
-
-    const row  = document.createElement('div');
-    row.className   = 'city-row' + (on ? ' on' : '');
-    row.dataset.key = key;
-
-    const dot  = document.createElement('div');
-    dot.className        = 'dot';
-    dot.style.background = color;
-    dot.style.color      = color;
-
-    const span = document.createElement('span');
-    span.className   = 'cname';
-    span.textContent = label;
-
-    row.appendChild(dot);
-    row.appendChild(span);
-    row.addEventListener('click', () => toggleCity(key));
-    container.appendChild(row);
-  }
-}
-
-function toggleCity(key) {
-  if (selectedCities.has(key)) selectedCities.delete(key);
-  else                          selectedCities.add(key);
-  syncListSelection();
-  updateChart();
-}
-
-function syncListSelection() {
-  document.querySelectorAll('.city-row').forEach(row =>
-    row.classList.toggle('on', selectedCities.has(row.dataset.key))
-  );
-  document.getElementById('sel-count').textContent = selectedCities.size + ' selected';
-}
-
-document.getElementById('search').addEventListener('input', function () {
-  renderCityList(this.value);
-});
-
-document.getElementById('btn-clear').addEventListener('click', () => {
-  selectedCities.clear();
-  syncListSelection();
-  updateChart();
-});
-
-document.getElementById('btn-sample').addEventListener('click', () => {
-  selectedCities.clear();
-  [...sortedCityKeys].sort(() => Math.random() - 0.5).slice(0, 6)
-    .forEach(k => selectedCities.add(k));
-  syncListSelection();
-  updateChart();
-});
-
-/* ─── Chart ──────────────────────────────────────────────────────── */
-
-function buildMonthlyAvgs(key) {
-  const avgs = {};
-  for (const [m, vals] of cityData.get(key))
-    avgs[m] = vals.reduce((s, v) => s + v, 0) / vals.length;
-  return avgs;
-}
-
-function updateChart() {
-  const hasCity = selectedCities.size > 0;
-  const hasBand = activeBands.size > 0;
-  const hint    = document.getElementById('hint');
-
-  if (!hasCity && !hasBand) {
-    hint.style.display = 'block';
-    if (chart) { chart.data.labels = []; chart.data.datasets = []; chart.update('none'); }
-    return;
-  }
-  hint.style.display = 'none';
-
-  // Shared x-axis labels
-  const labels = allMonths.map(m => {
-    const d = new Date(m);
-    return `${MONTH_SHORT[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
-  });
-
-  const datasets = [];
-
-  // ── Lat-band reference lines (drawn behind city lines) ──
-  for (const band of BANDS) {
-    if (!activeBands.has(band.key)) continue;
-    const avgs = bandAvgs.get(band.key);
-    datasets.push({
-      label: band.label + ' avg',
-      data: allMonths.map(m => avgs.has(m) ? avgs.get(m) : null),
-      borderColor: band.color,
-      backgroundColor: 'transparent',
-      borderWidth: 1.6,
-      borderDash: [8, 5],
-      fill: false,
-      tension: 0.4,
-      pointRadius: 0,
-      spanGaps: true,   // bands are always continuous (massive data)
-      order: 10,
-    });
-  }
-
-  // ── City lines + selection mean ──
-  if (hasCity) {
-    const cityAvgList = Array.from(selectedCities).map(key => ({
-      key, avgs: buildMonthlyAvgs(key),
-    }));
-
-    // Grand mean + std dev across selected cities
-    const meanArr = [], upperArr = [], lowerArr = [];
-    for (const m of allMonths) {
-      const vals = cityAvgList.map(c => c.avgs[m]).filter(v => v !== undefined);
-      if (vals.length === 0) {
-        meanArr.push(null); upperArr.push(null); lowerArr.push(null);
-        continue;
+        row.appendChild(top);
+        row.appendChild(range);
+        row.addEventListener('click', () => toggleBand(band.key));
+        container.appendChild(row);
       }
-      const mean = vals.reduce((s, v) => s + v, 0) / vals.length;
-      const std  = vals.length > 1
-        ? Math.sqrt(vals.map(v => (v - mean) ** 2).reduce((s, v) => s + v, 0) / vals.length)
-        : 0;
-      meanArr.push(mean);
-      upperArr.push(mean + std);
-      lowerArr.push(mean - std);
     }
 
-    // Std-dev band (upper fills DOWN to lower)
-    datasets.push({
-      label: '_upper',
-      data: upperArr,
-      borderColor: 'transparent',
-      backgroundColor: 'rgba(255,255,255,0.07)',
-      fill: '+1',
-      tension: 0.4,
-      pointRadius: 0,
-      order: 4,
-    });
-    datasets.push({
-      label: '_lower',
-      data: lowerArr,
-      borderColor: 'transparent',
-      backgroundColor: 'transparent',
-      fill: false,
-      tension: 0.4,
-      pointRadius: 0,
-      order: 4,
-    });
+    function toggleBand(key) {
+      if (activeBands.has(key)) activeBands.delete(key);
+      else activeBands.add(key);
 
-    // Selection mean (white dashed)
-    datasets.push({
-      label: 'City selection avg',
-      data: meanArr,
-      borderColor: 'rgba(255,255,255,0.82)',
-      backgroundColor: 'transparent',
-      borderWidth: 2,
-      borderDash: [7, 4],
-      fill: false,
-      tension: 0.4,
-      pointRadius: 0,
-      spanGaps: true,
-      order: 1,
-    });
+      document.querySelectorAll('.band-row').forEach(row => {
+        row.classList.toggle('on', activeBands.has(row.dataset.key));
+      });
+      drawBandGlobe();
+      updateChart();
+    }
 
-    // Individual city lines — spanGaps: false preserves sparse-city dots
-    for (const { key, avgs } of cityAvgList) {
-      const color = PALETTE[cityColorIdx.get(key) % PALETTE.length];
-      const meta  = cityMeta.get(key);
-      datasets.push({
-        label: meta.country ? `${meta.city}, ${meta.country}` : meta.city,
-        data: allMonths.map(m => avgs[m] !== undefined ? avgs[m] : null),
-        borderColor: color,
-        backgroundColor: color + '22',  // faint fill under isolated dots
-        borderWidth: 1.6,
-        fill: false,
-        tension: 0.4,
-        pointRadius: 0,
-        pointHoverRadius: 4,
-        pointHoverBackgroundColor: color,
-        spanGaps: false,   // ← disconnected: shows original dot behavior for sparse cities
-        order: 2,
+    /* ─── Globe-slice visual ─────────────────────────────────────────── */
+
+    function drawBandGlobe() {
+      const cnv = document.getElementById('band-globe');
+      if (!cnv) return;
+      const ctx = cnv.getContext('2d');
+      const W = 156, H = 112;
+      ctx.clearRect(0, 0, W, H);
+
+      // Thin vertical pill representing the latitude axis
+      const barW = 22, barH = 90;
+      const bx = 46;         // leave room for labels on left
+      const by = (H - barH) / 2;
+      const r = barW / 2;
+
+      // Clip to rounded rect
+      ctx.save();
+      ctx.beginPath();
+      roundRect(ctx, bx, by, barW, barH, r);
+      ctx.clip();
+
+      // Draw each band (Arctic at top, Antarctic at bottom)
+      const segH = barH / BANDS.length;
+      BANDS.forEach((band, i) => {
+        const on = activeBands.has(band.key);
+        const y = by + i * segH;
+        ctx.globalAlpha = on ? 0.9 : 0.12;
+        ctx.fillStyle = band.color;
+        ctx.fillRect(bx, y, barW, segH + 0.5);
+      });
+
+      ctx.globalAlpha = 1;
+      ctx.restore();
+
+      // Outer border
+      ctx.strokeStyle = '#1e1e1e';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      roundRect(ctx, bx, by, barW, barH, r);
+      ctx.stroke();
+
+      // Segment dividers
+      ctx.strokeStyle = '#050505';
+      ctx.lineWidth = 0.8;
+      for (let i = 1; i < BANDS.length; i++) {
+        const y = by + i * segH;
+        ctx.beginPath();
+        ctx.moveTo(bx + 1, y);
+        ctx.lineTo(bx + barW - 1, y);
+        ctx.stroke();
+      }
+
+      // Lat labels on the right side
+      const latLabels = ['90°N', '60°N', '30°N', '0°', '30°S', '60°S', '90°S'];
+      ctx.font = '8px Segoe UI, system-ui, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      latLabels.forEach((lbl, i) => {
+        const y = by + (i / (latLabels.length - 1)) * barH;
+        // tick
+        ctx.strokeStyle = '#1e1e1e';
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(bx + barW, y);
+        ctx.lineTo(bx + barW + 4, y);
+        ctx.stroke();
+        ctx.fillStyle = '#303030';
+        ctx.fillText(lbl, bx + barW + 6, y);
+      });
+
+      // Band label abbreviations on left
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      BANDS.forEach((band, i) => {
+        const on = activeBands.has(band.key);
+        const y = by + (i + 0.5) * segH;
+        ctx.fillStyle = on ? band.color : '#2a2a2a';
+        ctx.font = on ? 'bold 8px Segoe UI, sans-serif' : '8px Segoe UI, sans-serif';
+        // abbreviation
+        const abbr = { arctic: 'ARC', mid_north: 'NML', tropics: 'TRP', mid_south: 'SML', antarctic: 'ANT' };
+        ctx.fillText(abbr[band.key], bx - 4, y);
       });
     }
-  }
 
-  if (!chart) {
-    const ctx = document.getElementById('myChart').getContext('2d');
-    chart = new Chart(ctx, {
-      type: 'line',
-      data: { labels, datasets },
-      options: chartOptions(),
+    // Polyfill for ctx.roundRect in case of older Chromium
+    function roundRect(ctx, x, y, w, h, r) {
+      if (ctx.roundRect) {
+        ctx.roundRect(x, y, w, h, r);
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+    }
+
+    /* ─── City list UI ───────────────────────────────────────────────── */
+
+    function renderCityList(filter = '') {
+      const container = document.getElementById('city-list');
+      container.innerHTML = '';
+      const fl = filter.toLowerCase();
+
+      for (const key of sortedCityKeys) {
+        const meta = cityMeta.get(key);
+        const label = meta.country ? `${meta.city}, ${meta.country}` : meta.city;
+        if (fl && !label.toLowerCase().includes(fl)) continue;
+
+        const color = PALETTE[cityColorIdx.get(key) % PALETTE.length];
+        const on = selectedCities.has(key);
+
+        const row = document.createElement('div');
+        row.className = 'city-row' + (on ? ' on' : '');
+        row.dataset.key = key;
+
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        dot.style.background = color;
+        dot.style.color = color;
+
+        const span = document.createElement('span');
+        span.className = 'cname';
+        span.textContent = label;
+
+        row.appendChild(dot);
+        row.appendChild(span);
+        row.addEventListener('click', () => toggleCity(key));
+        container.appendChild(row);
+      }
+    }
+
+    function toggleCity(key) {
+      if (selectedCities.has(key)) selectedCities.delete(key);
+      else selectedCities.add(key);
+      syncListSelection();
+      updateChart();
+    }
+
+    function syncListSelection() {
+      document.querySelectorAll('.city-row').forEach(row =>
+        row.classList.toggle('on', selectedCities.has(row.dataset.key))
+      );
+      document.getElementById('sel-count').textContent = selectedCities.size + ' selected';
+    }
+
+    document.getElementById('search').addEventListener('input', function () {
+      renderCityList(this.value);
     });
-  } else {
-    chart.data.labels   = labels;
-    chart.data.datasets = datasets;
-    chart.update('active');
-  }
-}
 
-function chartOptions() {
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: { duration: 300 },
-    interaction: { mode: 'index', intersect: false },
+    document.getElementById('btn-clear').addEventListener('click', () => {
+      selectedCities.clear();
+      syncListSelection();
+      updateChart();
+    });
 
-    plugins: {
-      legend: {
-        position: 'bottom',
-        labels: {
-          color: '#666',
-          font: { size: 10.5, family: "'Segoe UI', system-ui, sans-serif" },
-          boxWidth: 20,
-          boxHeight: 2,
-          padding: 14,
-          filter: item => !item.text.startsWith('_'),
-        },
-      },
-      tooltip: {
-        backgroundColor: 'rgba(8,8,8,0.94)',
-        borderColor: '#222',
-        borderWidth: 1,
-        titleColor: '#999',
-        bodyColor: '#ccc',
-        padding: 10,
-        callbacks: {
-          title: items => items[0].label,
-          label(ctx) {
-            if (ctx.dataset.label.startsWith('_')) return null;
-            const v = ctx.parsed.y;
-            if (v === null || v === undefined) return null;
-            return ` ${ctx.dataset.label}: ${v.toFixed(3)} ppm`;
+    document.getElementById('btn-sample').addEventListener('click', () => {
+      selectedCities.clear();
+      [...sortedCityKeys].sort(() => Math.random() - 0.5).slice(0, 4) // random 4 cities
+        .forEach(k => selectedCities.add(k));
+      syncListSelection();
+      updateChart();
+    });
+
+    /* ─── Chart ──────────────────────────────────────────────────────── */
+
+    function buildMonthlyAvgs(key) {
+      const avgs = {};
+      for (const [m, vals] of cityData.get(key))
+        avgs[m] = vals.reduce((s, v) => s + v, 0) / vals.length;
+      return avgs;
+    }
+
+    function updateChart() {
+      const hasCity = selectedCities.size > 0;
+      const hasBand = activeBands.size > 0;
+      const hint = document.getElementById('hint');
+
+      if (!hasCity && !hasBand) {
+        hint.style.display = 'block';
+        if (chart) { chart.data.labels = []; chart.data.datasets = []; chart.update('none'); }
+        return;
+      }
+      hint.style.display = 'none';
+
+      // Shared x-axis labels
+      const labels = allMonths.map(m => {
+        const d = new Date(m);
+        return `${MONTH_SHORT[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+      });
+
+      const datasets = [];
+
+      // ── Lat-band reference lines (drawn behind city lines) ──
+      for (const band of BANDS) {
+        if (!activeBands.has(band.key)) continue;
+        const avgs = bandAvgs.get(band.key);
+        datasets.push({
+          label: band.label + ' avg',
+          data: allMonths.map(m => avgs.has(m) ? avgs.get(m) : null),
+          borderColor: band.color,
+          backgroundColor: 'transparent',
+          borderWidth: 1.6,
+          borderDash: [8, 5],
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          spanGaps: true,   // bands are always continuous (massive data)
+          order: 10,
+        });
+      }
+
+      // ── City lines + selection mean ──
+      if (hasCity) {
+        const cityAvgList = Array.from(selectedCities).map(key => ({
+          key, avgs: buildMonthlyAvgs(key),
+        }));
+
+        // Grand mean + std dev across selected cities
+        const meanArr = [], upperArr = [], lowerArr = [];
+        for (const m of allMonths) {
+          const vals = cityAvgList.map(c => c.avgs[m]).filter(v => v !== undefined);
+          if (vals.length === 0) {
+            meanArr.push(null); upperArr.push(null); lowerArr.push(null);
+            continue;
+          }
+          const mean = vals.reduce((s, v) => s + v, 0) / vals.length;
+          const std = vals.length > 1
+            ? Math.sqrt(vals.map(v => (v - mean) ** 2).reduce((s, v) => s + v, 0) / vals.length)
+            : 0;
+          meanArr.push(mean);
+          upperArr.push(mean + std);
+          lowerArr.push(mean - std);
+        }
+
+        // Std-dev band (upper fills DOWN to lower)
+        datasets.push({
+          label: '_upper',
+          data: upperArr,
+          borderColor: 'transparent',
+          backgroundColor: 'rgba(255,255,255,0.2)',
+          fill: '+1',
+          tension: 0.35,
+          cubicInterpolationMode: 'monotone', // smoother interpolation
+          pointRadius: 0,
+          order: 4,
+        });
+        datasets.push({
+          label: '_lower',
+          data: lowerArr,
+          borderColor: 'transparent',
+          backgroundColor: 'transparent',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          order: 4,
+        });
+
+        // Selection mean (white dashed)
+        datasets.push({
+          label: 'City selection avg',
+          data: meanArr,
+          borderColor: 'rgba(255,255,255,0.82)',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          borderDash: [7, 4],
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          spanGaps: true,
+          order: 1,
+        });
+
+        // Individual city lines — spanGaps: false preserves sparse-city dots
+        for (const { key, avgs } of cityAvgList) {
+          const color = PALETTE[cityColorIdx.get(key) % PALETTE.length];
+          const meta = cityMeta.get(key);
+          datasets.push({
+            label: meta.country ? `${meta.city}, ${meta.country}` : meta.city,
+            data: allMonths.map(m => avgs[m] !== undefined ? avgs[m] : null),
+            borderColor: color,
+            backgroundColor: color + '22',  // faint fill under isolated dots
+            borderWidth: 1.6,
+            fill: false,
+            tension: 0.35,
+            cubicInterpolationMode: 'monotone', // smoother interpolation
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            pointHitRadius: 8, // suppress dots but keep hover
+            pointHoverBackgroundColor: color,
+            spanGaps: true,   // if false, disconnected and shows original dot behavior for sparse cities
+            order: 2,
+          });
+        }
+      }
+
+      if (!chart) {
+        const ctx = document.getElementById('myChart').getContext('2d');
+        chart = new Chart(ctx, {
+          type: 'line',
+          data: { labels, datasets },
+          options: chartOptions(),
+        });
+      } else {
+        chart.data.labels = labels;
+        chart.data.datasets = datasets;
+        chart.update('active');
+      }
+    }
+
+    function chartOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 300 },
+        interaction: { mode: 'index', intersect: false },
+
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: '#666',
+              font: { size: 10.5, family: "'Segoe UI', system-ui, sans-serif" },
+              boxWidth: 20,
+              boxHeight: 2,
+              padding: 14,
+              filter: item => !item.text.startsWith('_'),
+            },
+          },
+          tooltip: {
+            backgroundColor: 'rgba(8,8,8,0.94)',
+            borderColor: '#222',
+            borderWidth: 1,
+            titleColor: '#999',
+            bodyColor: '#ccc',
+            padding: 10,
+            callbacks: {
+              title: items => items[0].label,
+              label(ctx) {
+                if (ctx.dataset.label.startsWith('_')) return null;
+                const v = ctx.parsed.y;
+                if (v === null || v === undefined) return null;
+                return ` ${ctx.dataset.label}: ${v.toFixed(3)} ppm`;
+              },
+            },
           },
         },
-      },
-    },
 
-    scales: {
-      x: {
-        type: 'category',
-        ticks: {
-          color: '#3a3a3a',
-          font: { size: 10 },
-          maxRotation: 0,
-          autoSkip: true,
-          maxTicksLimit: 14,
+        scales: {
+          x: {
+            type: 'category',
+            ticks: {
+              color: '#3a3a3a',
+              font: { size: 10 },
+              maxRotation: 0,
+              autoSkip: true,
+              maxTicksLimit: 14,
+            },
+            grid: { color: '#0f0f0f', drawTicks: false },
+            border: { color: '#1a1a1a' },
+          },
+          y: {
+            ticks: {
+              color: '#3a3a3a',
+              font: { size: 10 },
+              callback: v => v.toFixed(1) + ' ppm',
+              maxTicksLimit: 8,
+            },
+            grid: { color: '#0f0f0f', drawTicks: false },
+            border: { color: '#1a1a1a' },
+            title: {
+              display: true,
+              text: 'XCO₂ (ppm)',
+              color: '#2e2e2e',
+              font: { size: 10 },
+            },
+          },
         },
-        grid: { color: '#0f0f0f', drawTicks: false },
-        border: { color: '#1a1a1a' },
-      },
-      y: {
-        ticks: {
-          color: '#3a3a3a',
-          font: { size: 10 },
-          callback: v => v.toFixed(1) + ' ppm',
-          maxTicksLimit: 8,
-        },
-        grid: { color: '#0f0f0f', drawTicks: false },
-        border: { color: '#1a1a1a' },
-        title: {
-          display: true,
-          text: 'XCO₂ (ppm)',
-          color: '#2e2e2e',
-          font: { size: 10 },
-        },
-      },
-    },
-  };
-}
-</script>
+      };
+    }
+  </script>
 </body>
+
 </html>
