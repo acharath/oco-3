@@ -1,6 +1,6 @@
 .env
 .venv
-co2_sam (1).csv
+co2_sam.csv
 sif_sam.csv
 *.xlsx
 .DS_Store

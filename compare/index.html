@@ -14,7 +14,24 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);
   color:var(--t1);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;font-size:13px}
-body{display:flex}
+body{display:flex;flex-direction:column}
+
+.app-shell{display:flex;flex:1;min-height:0}
+
+.global-tabs{
+  height:34px;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:5px 10px;border-bottom:1px solid #121212;background:#050505;flex-shrink:0
+}
+.global-tab{
+  min-width:166px;height:21px;border-radius:4px;border:1px solid #1f1f1f;background:#0d0d0d;
+  color:#4f4f4f;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  text-transform:uppercase;letter-spacing:.07em;font-size:8.5px;font-weight:600;
+  transition:border-color .15s,color .15s,background .15s
+}
+.global-tab:hover{border-color:#2b2b2b;color:#b6b6b6}
+.global-tab small{color:#3e3e3e;font-size:8px;font-weight:500;text-transform:none;letter-spacing:.015em}
+.global-tab.active{border-color:#6d6d6d;background:#0a0a0a;color:#f1f1f1;box-shadow:inset 0 0 0 1px #161616}
+.global-tab.active small{color:#888}
 
 /* ── Sidebar ─────────────────────────────────────────────── */
 .sb{width:248px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--b1);
@@ -83,19 +100,24 @@ body{display:flex}
 .yr-sel:focus{border-color:var(--b3)}
 .yr-dash{color:var(--t3);font-size:11px;flex-shrink:0}
 .months-hint{font-size:9px;color:var(--t3);margin-top:5px}
-.view-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
-.vb{padding:5px 0;background:var(--bg3);border:1px solid var(--b2);color:var(--t3);
-  border-radius:3px;cursor:pointer;font-family:inherit;font-size:10px;text-align:center;
-  letter-spacing:.04em;transition:all .12s}
-.vb:hover{color:var(--t2);border-color:var(--b3)}
-.vb.on{color:var(--accent);border-color:var(--accent)44;background:#061518}
+.slider-col{margin-bottom:7px}
+.slider-head{display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#6b6b6b;margin-bottom:4px}
+.range-dual{position:relative;height:18px}
+.range-track{position:absolute;left:0;right:0;top:8px;height:3px;border-radius:2px;background:#1f1f1f}
+.m-slider{position:absolute;left:0;right:0;top:1px;width:100%;height:14px;accent-color:#6a6a6a;background:transparent}
+.m-slider::-webkit-slider-runnable-track{height:3px;background:transparent}
+.m-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:11px;height:11px;border-radius:50%;background:#8a8a8a;border:1px solid #3d3d3d;margin-top:-4px}
+.m-slider::-moz-range-track{height:3px;background:transparent}
+.m-slider::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:#8a8a8a;border:1px solid #3d3d3d}
+.band-list{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.band-row{padding:4px 6px;border:1px solid #222;border-radius:4px;font-size:9px;color:#666;background:#0e0e0e;cursor:pointer;user-select:none;transition:all .12s}
+.band-row:hover{border-color:#333;color:#b1b1b1}
+.band-row.on{border-color:#4a4a4a;color:#dadada;background:#141414}
+.mini-globes{display:flex;gap:8px;justify-content:space-between}
+.mini-globe{display:flex;flex-direction:column;align-items:center;gap:4px}
+.mini-globe canvas{width:84px;height:84px;border:1px solid #1a1a1a;border-radius:50%;background:#070707}
+.mini-globe span{font-size:8px;color:#5f5f5f;letter-spacing:.08em;text-transform:uppercase}
 .sb-foot{padding:10px 16px 14px;border-top:1px solid var(--b1);flex-shrink:0;margin-top:auto}
-.ts-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:9px 12px;
-  background:#091209;border:1px solid #142014;border-radius:5px;text-decoration:none;
-  color:#39ff14;font-size:11px;letter-spacing:.04em;margin-bottom:8px;transition:background .14s}
-.ts-btn:hover{background:#0c1a0c}
-.ts-btn-arr{font-size:17px;animation:bob .85s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 .back-lnk{font-size:9px;color:#252525;text-decoration:none;display:block;text-align:center}
 .back-lnk:hover{color:var(--t3)}
 
@@ -130,7 +152,7 @@ body{display:flex}
 .dot.on{background:var(--accent);box-shadow:0 0 8px rgba(0,245,255,.45)}
 
 /* View header bar */
-#vhdr{position:absolute;top:12px;left:50%;transform:translateX(-50%);
+#vhdr{position:absolute;top:10px;left:50%;transform:translateX(-50%);
   z-index:10;pointer-events:none;text-align:center}
 #vhdr h2{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
   color:rgba(255,255,255,.9)}
@@ -156,14 +178,6 @@ body{display:flex}
   max-width:160px}
 .sc-col-block{display:inline-flex;align-items:center;gap:8px}
 
-/* Pulse link overlay */
-#plink{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:10;
-  display:none;flex-direction:column;align-items:center;gap:3px;
-  text-decoration:none;color:#39ff14}
-#plink:hover{opacity:.8}
-#plink .pl-lbl{font-size:9px;letter-spacing:.12em;text-transform:uppercase}
-#plink .pl-arr{font-size:22px;animation:bob .85s ease-in-out infinite}
-
 /* Loading */
 #ldg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:8px;color:#1e1e1e;pointer-events:none;z-index:5}
@@ -173,6 +187,14 @@ body{display:flex}
 </style>
 </head>
 <body>
+<nav class="global-tabs" aria-label="Visualization switcher">
+  <a class="global-tab" data-tab="globe" href="?view=globe">Globe <small>Spatial Comparison</small></a>
+  <a class="global-tab" data-tab="pulse" href="?view=pulse">Pulse <small>Temporal Exploration</small></a>
+  <a class="global-tab" data-tab="timeseries" href="../timeseries/index.html">Timeseries <small>City Trends</small></a>
+  <a class="global-tab" data-tab="scatter" href="?view=scatter">Scatter <small>Variable Correlation</small></a>
+  <a class="global-tab" data-tab="quadrant" href="?view=quadrant">Quadrant <small>Anomaly Detection</small></a>
+</nav>
+<div class="app-shell">
 
 <aside class="sb">
   <div class="sb-head">
@@ -184,31 +206,39 @@ body{display:flex}
       <div class="sb-lbl">Selected <span class="sb-lbl-hint" id="sel-count"></span></div>
       <div class="chips" id="chips"></div>
     </div>
-    <div class="sb-sec" style="flex:1;display:flex;flex-direction:column;border-bottom:none">
-      <div class="sb-lbl">All Cities <span class="sb-lbl-hint">click to toggle</span></div>
-      <input class="sb-inp" id="srch" type="text" placeholder="Filter cities&#x2026;" autocomplete="off" style="margin-bottom:2px">
-      <div class="city-list" id="city-list"></div>
+    <div class="sb-sec">
+      <div class="sb-lbl">Search Cities</div>
+      <div class="sb-search-wrap">
+        <input class="sb-inp" id="srch" type="text" placeholder="Add city&#x2026;" autocomplete="off">
+        <div class="ac" id="city-ac"></div>
+      </div>
     </div>
     <div class="sb-sec">
       <div class="sb-lbl">Time Range</div>
-      <div class="yr-row">
-        <select class="yr-sel" id="yfrom"></select>
-        <span class="yr-dash">&#x2014;</span>
-        <select class="yr-sel" id="yto"></select>
+      <div class="slider-col" style="margin-bottom:0">
+        <div class="slider-head"><span id="mfrom-lbl"></span><span id="mto-lbl"></span></div>
+        <div class="range-dual">
+          <div class="range-track" id="month-track"></div>
+          <input class="m-slider" id="mfrom-slider" type="range" min="0" max="0" step="1" value="0">
+          <input class="m-slider" id="mto-slider" type="range" min="0" max="0" step="1" value="0">
+        </div>
       </div>
       <div class="months-hint" id="mhint"></div>
     </div>
     <div class="sb-sec">
-      <div class="sb-lbl">Analysis View</div>
-      <div class="view-grid" id="vgrid"></div>
+      <div class="sb-lbl">Latitude Bands <span class="sb-lbl-hint">filter all views</span></div>
+      <div class="band-list" id="lat-band-list"></div>
+    </div>
+    <div class="sb-sec" id="mini-globes-sec">
+      <div class="sb-lbl">Scatter/Quadrant Globes</div>
+      <div class="mini-globes">
+        <div class="mini-globe"><canvas id="mini-front" width="84" height="84"></canvas><span>Front</span></div>
+        <div class="mini-globe"><canvas id="mini-back" width="84" height="84"></canvas><span>Back</span></div>
+      </div>
     </div>
   </div>
   <div class="sb-foot">
-    <a class="ts-btn" href="../timeseries/index.html">
-      <span class="ts-btn-arr">&#x21e9;</span>
-      <span>Full Timeseries Explorer</span>
-    </a>
-    <a class="back-lnk" href="../index.html">&#x2190; back to home</a>
+    <a class="back-lnk" href="?view=globe">&#x2190; back to globe</a>
   </div>
 </aside>
 <div class="sb-resizer" id="sb-resizer" title="Drag to resize sidebar"></div>
@@ -266,10 +296,7 @@ body{display:flex}
       </select>
     </span>
   </div>
-  <a id="plink" href="../timeseries/index.html">
-    <span class="pl-lbl">Open in Timeseries Explorer</span>
-    <span class="pl-arr">&#x21e9;</span>
-  </a>
+</div>
 </div>
 
 <script src="lib/d3.min.js"></script>
@@ -371,6 +398,16 @@ const ALL_MONTHS = (()=>{
   for(const y of YEARS) for(let m=1;m<=12;m++) ms.push(y+'-'+String(m).padStart(2,'0'));
   return ms.filter(m=>m>='2019-08'&&m<='2025-12');
 })();
+const MIN_MONTH = ALL_MONTHS[0];
+const MAX_MONTH = ALL_MONTHS[ALL_MONTHS.length-1];
+const LAT_BANDS = [
+  {key:'arctic',label:'60N-90N',latMin:60,latMax:90},
+  {key:'mid_north',label:'30N-60N',latMin:30,latMax:60},
+  {key:'tropics',label:'30S-30N',latMin:-30,latMax:30},
+  {key:'mid_south',label:'30S-60S',latMin:-60,latMax:-30},
+  {key:'antarctic',label:'60S-90S',latMin:-90,latMax:-60}
+];
+const CITY_BY_NAME = new Map(CITY_DATA.map(c=>[c.name,c]));
 
 // ── SCATTER VARIABLE DEFINITIONS ─────────────────────────────────
 // fmt: axis tick / legend number; short: compact legend label
@@ -403,7 +440,8 @@ function scatVal(c,key,months){
 }
 
 function scatCities(){
-  return S.sel.length ? CITY_DATA.filter(c=>S.sel.includes(c.name)) : CITY_DATA;
+  const all=visibleCities();
+  return S.sel.length ? all.filter(c=>S.sel.includes(c.name)) : all;
 }
 
 // ── APP STATE ─────────────────────────────────────────────────────
@@ -413,6 +451,9 @@ let S = {
   view:   0,
   yfrom:  2019,
   yto:    2025,
+  mfrom:  MIN_MONTH,
+  mto:    MAX_MONTH,
+  activeBands: new Set(LAT_BANDS.map(b=>b.key)),
   rot:    {lon: -30, lat: 20},
   flat:   false,
   hover:  null,
@@ -434,9 +475,18 @@ const DEFAULT_SEL = ['Los Angeles','London','Beijing','Tokyo','Mumbai','Lagos'];
 
 
 // ── TIME HELPERS ──────────────────────────────────────────────────
-function mink(){return `${S.yfrom}-01`;}
-function maxk(){return `${S.yto}-12`;}
+function mink(){return S.mfrom;}
+function maxk(){return S.mto;}
+function cityInActiveBands(c){
+  if(!c) return false;
+  if(S.activeBands.size===LAT_BANDS.length) return true;
+  return LAT_BANDS.some(b=>S.activeBands.has(b.key)&&c.lat>=b.latMin&&c.lat<b.latMax);
+}
+function visibleCities(){return CITY_DATA.filter(cityInActiveBands);}
+function visibleSelectedNames(){return S.sel.filter(n=>cityInActiveBands(CITY_BY_NAME.get(n)));}
 function filtMo(name){
+  const c=CITY_BY_NAME.get(name);
+  if(c&&!cityInActiveBands(c)) return [];
   const mo=CO2_MONTHLY[name]; if(!mo) return [];
   const a=mink(),b=maxk();
   return Object.keys(mo).filter(m=>m>=a&&m<=b).sort();
@@ -476,7 +526,7 @@ function getSIF(name, months){
     if(keys.length) return keys.reduce((s,m)=>s+(mo[m]||0),0)/keys.length;
   }
   // Fallback simulation using city lat
-  const c=CITY_DATA.find(x=>x.name===name);
+  const c=CITY_BY_NAME.get(name);
   const lat=c?c.lat:0;
   if(!months||!months.length){let s=0;for(let m=1;m<=12;m++)s+=_sifSim(lat,"2022-"+String(m).padStart(2,"0"));return s/12;}
   return months.reduce((s,m)=>s+_sifSim(lat,m),0)/months.length;
@@ -753,12 +803,12 @@ function drawGlobe(proj,opts={}){
   // ── 7. Land – drawn LAST so it always sits on top of shading ──
   if(land){
     ctx.beginPath(); path(land);
-    ctx.fillStyle="#16284a"; ctx.fill();   // brighter than ocean base
+    ctx.fillStyle="#14233f"; ctx.fill();
   }
   // ── 8. Country borders ────────────────────────────────────────
   if(countries){
     ctx.beginPath(); path(countries);
-    ctx.strokeStyle="rgba(70,130,230,0.65)"; ctx.lineWidth=.6; ctx.stroke();
+    ctx.strokeStyle="rgba(72,112,178,0.45)"; ctx.lineWidth=.55; ctx.stroke();
   }
 
   if(light){
@@ -785,7 +835,7 @@ function drawGlobe(proj,opts={}){
   ctx.strokeStyle="rgba(65,140,255,0.55)"; ctx.lineWidth=1.8; ctx.stroke();
 
   // ── 12. Major lat/lon labels ──────────────────────────────────
-  drawGlobeLatLonLabels(proj);
+  // Keep graticule lines; axis degree labels removed.
 
   ctx.restore();
 }
@@ -799,7 +849,7 @@ function drawFlatMap(proj){
   const gratMajor=d3.geoGraticule().step([30,30])();
   ctx.beginPath();path(gratMajor);
   ctx.strokeStyle="rgba(88,138,226,0.5)";ctx.lineWidth=.75;ctx.stroke();
-  drawFlatLatLonLabels(proj);
+  // Keep graticule lines; axis degree labels removed.
 }
 
 // ── CITY DOTS ─────────────────────────────────────────────────────
@@ -908,14 +958,15 @@ function drawDots(proj,opts={}){
   const{selR=6,dimR=1.5,labels=true,sizeByXco2=false}=opts;
   const mo=S.month; // null = avg, "YYYY-MM" = specific month
   // For sizing selected cities: use deviation from global mean for that month, or avg deviation
-  const selXco2s=S.sel.map(n=>{
+  const selXco2s=visibleSelectedNames().map(n=>{
     if(mo){const v=(CO2_MONTHLY[n]||{})[mo]; return v!=null?Math.abs(v-420):0;}
     return xco2Dev(n);
   });
   const maxDev=Math.max(...selXco2s,1);
 
   // Background cities
-  for(const c of CITY_DATA){
+  for(const c of visibleCities()){
+    if(!S.flat && !isFrontHemisphere(proj,c.lon,c.lat)) continue;
     if(S.sel.includes(c.name)) continue;
     const p=proj([c.lon,c.lat]); if(!p) continue;
     const isHov=S.hover===c.name;
@@ -939,8 +990,9 @@ function drawDots(proj,opts={}){
     }
   }
   // Selected cities on top
-  for(const name of S.sel){
-    const c=CITY_DATA.find(x=>x.name===name); if(!c) continue;
+  for(const name of visibleSelectedNames()){
+    const c=CITY_BY_NAME.get(name); if(!c) continue;
+    if(!S.flat && !isFrontHemisphere(proj,c.lon,c.lat)) continue;
     const p=proj([c.lon,c.lat]); if(!p) continue;
     const col=S.colors[name];
     const dev=mo?((CO2_MONTHLY[name]||{})[mo]!=null?Math.abs((CO2_MONTHLY[name]||{})[mo]-420):0):xco2Dev(name);
@@ -988,7 +1040,7 @@ function drawMinimap(alpha=0.85){
   const path=d3.geoPath(proj,ctx);
   if(land){ctx.beginPath();path(land);ctx.fillStyle="#0f1e34";ctx.fill();}
   if(countries){ctx.beginPath();path(countries);ctx.strokeStyle="rgba(45,90,170,0.45)";ctx.lineWidth=.4;ctx.stroke();}
-  for(const c of CITY_DATA){
+  for(const c of visibleCities()){
     const p=proj([c.lon,c.lat]); if(!p) continue;
     if(p[0]<mx||p[0]>mx+mw||p[1]<my||p[1]>my+mh) continue;
     const isSel=S.sel.includes(c.name);
@@ -1017,8 +1069,7 @@ function drawScrubber(){
 
   // Month segments — colored by whether in current year filter
   months.forEach((m,j)=>{
-    const yr=+m.slice(0,4);
-    const inRange=yr>=S.yfrom&&yr<=S.yto;
+    const inRange=m>=S.mfrom&&m<=S.mto;
     const isCur=m===S.month;
     const x=xOf(j);
     ctx.fillStyle=isCur?"#00f5ff":inRange?"rgba(0,180,220,0.28)":"rgba(60,60,60,0.3)";
@@ -1097,7 +1148,7 @@ function drawV0(){
   ctx.fillStyle="rgba(5,5,5,.8)"; ctx.fillRect(12,12,224,18);
   ctx.fillStyle="#666"; ctx.font="9px Segoe UI,sans-serif";
   ctx.textBaseline="middle"; ctx.textAlign="left";
-  ctx.fillText(CITY_DATA.length+" cities \u00b7 OCO-3 SAM \u00b7 click to select",18,22);
+  ctx.fillText(visibleCities().length+" cities \u00b7 OCO-3 SAM \u00b7 click to select",18,22);
   ctx.restore();
   drawScrubber();
 }
@@ -1109,7 +1160,8 @@ function drawV1(){
   const proj=S.flat?mkFlat(W/2,H/2,W/6.6):mkGlobe(W/2,H/2,sc);
   if(S.flat) drawFlatMap(proj); else drawGlobe(proj,{stars:false});
   // Dim all non-selected
-  for(const c of CITY_DATA){
+  for(const c of visibleCities()){
+    if(!S.flat && !isFrontHemisphere(proj,c.lon,c.lat)) continue;
     if(S.sel.includes(c.name)) continue;
     const p=proj([c.lon,c.lat]); if(!p) continue;
     ctx.beginPath(); ctx.arc(p[0],p[1],1.5,0,TAU);
@@ -1134,7 +1186,7 @@ function drawV1(){
   // ── Size legend (XCO2) ──
   ctx.fillStyle="#777"; ctx.font="8px Segoe UI,sans-serif";
   ctx.fillText("Bubble size  \u2192  Mean XCO\u2082 (ppm)",lx+4,ly+16);
-  const selDevs=S.sel.map(n=>xco2Dev(n));
+  const selDevs=visibleSelectedNames().map(n=>xco2Dev(n));
   const maxDev=Math.max(...selDevs,1);
   [.2,.55,1].forEach((f,k)=>{
     const r=Math.round(8+26*f);
@@ -1179,11 +1231,12 @@ function drawV1(){
 // ── VIEW 2: Pulse / Interleaved ───────────────────────────────────
 function drawV2(){
   ctx.clearRect(0,0,W,H);
-  if(!S.sel.length){noDataMsg("Select cities to see the pulse view");return;}
-  const n=S.sel.length;
+  const selNames=visibleSelectedNames();
+  if(!selNames.length){noDataMsg("Select cities to see the pulse view");return;}
+  const n=selNames.length;
   const gR=Math.min(W*.145,H*.19);
   const gCX=W*.21, gCY1=H*.28, gCY2=H*.72;
-  const sc=S.sel.map(nm=>CITY_DATA.find(c=>c.name===nm)).filter(Boolean);
+  const sc=visibleSelectedNames().map(nm=>CITY_BY_NAME.get(nm)).filter(Boolean);
   const cLon=sc.length?sc.reduce((s,c)=>s+c.lon,0)/sc.length:0;
   const cLat=sc.length?sc.reduce((s,c)=>s+c.lat,0)/sc.length:0;
   if(!S.pulseRot) S.pulseRot={lon:cLon,lat:cLat};
@@ -1195,7 +1248,7 @@ function drawV2(){
 
   S._pulseGeom={front:{cx:gCX,cy:gCY1,r:gR,proj:projF},back:{cx:gCX,cy:gCY2,r:gR,proj:projB}};
 
-  for(const c of CITY_DATA){
+  for(const c of visibleCities()){
     const visF=isFrontHemisphere(projF,c.lon,c.lat);
     const visB=isFrontHemisphere(projB,c.lon,c.lat);
     const p1=visF?projF([c.lon,c.lat]):null;
@@ -1233,7 +1286,7 @@ function drawV2(){
     const n2=S.sel.length;
     const labW=124,legH=56,topPad=52;
     const allMoSet2=new Set();
-    S.sel.forEach(nm=>filtMo(nm).forEach(m=>allMoSet2.add(m)));
+    visibleSelectedNames().forEach(nm=>filtMo(nm).forEach(m=>allMoSet2.add(m)));
     const months=Array.from(allMoSet2).sort();
     if(!months.length){noDataMsg("No data in selected time range");return;}
     const M=months.length;
@@ -1267,9 +1320,9 @@ function drawV2(){
     // Monthly means across selected cities
     const meanCo2={},meanSif={};
     months.forEach(m=>{
-      const cv=S.sel.map(nm=>(CO2_MONTHLY[nm]||{})[m]).filter(v=>v!=null);
-      const sv=S.sel.map(nm=>{
-        const c=CITY_DATA.find(x=>x.name===nm);
+      const cv=selNames.map(nm=>(CO2_MONTHLY[nm]||{})[m]).filter(v=>v!=null);
+      const sv=selNames.map(nm=>{
+        const c=CITY_BY_NAME.get(nm);
         if(!c) return null;
         const sm=SIF_MONTHLY[c.name]||{};
         return sm[m]!=null?sm[m]:_sifSim(c.lat,m);
@@ -1285,8 +1338,8 @@ function drawV2(){
     // For anomaly mode, normalize by max absolute deviation
     let maxCo2Diff=0,maxSifDiff=0;
     if(S.v2timelineMetric==='anomaly'){
-      S.sel.forEach(name=>{
-        const c=CITY_DATA.find(x=>x.name===name); if(!c) return;
+      selNames.forEach(name=>{
+        const c=CITY_BY_NAME.get(name); if(!c) return;
         const mo=CO2_MONTHLY[name]||{};
         const sm=SIF_MONTHLY[c.name]||{};
         months.forEach(m=>{
@@ -1338,8 +1391,8 @@ function drawV2(){
     ctx.strokeRect(startX,mY0,totW,mBandH);
     ctx.strokeRect(startX,mY0+mBandH+1,totW,mBandH);
 
-    S.sel.forEach((name,i)=>{
-      const c=CITY_DATA.find(x=>x.name===name); if(!c) return;
+    selNames.forEach((name,i)=>{
+      const c=CITY_BY_NAME.get(name); if(!c) return;
       const col=S.colors[name];
       const rowY=rowsTop+rowH2*(i+.62);
       const yCO2=rowY-bandH*.58-bandGap*.5;
@@ -1448,7 +1501,7 @@ function drawV2(){
   const rowH=(plotBot-plotTop)/Math.max(1,n);
 
   const allMoSet=new Set();
-  S.sel.forEach(nm=>filtMo(nm).forEach(m=>allMoSet.add(m)));
+  visibleSelectedNames().forEach(nm=>filtMo(nm).forEach(m=>allMoSet.add(m)));
   const allMo=Array.from(allMoSet).sort();
   if(!allMo.length){noDataMsg("No data in selected time range");return;}
   const xSc=(spW*.92)/Math.max(1,allMo.length-1);
@@ -1488,8 +1541,8 @@ function drawV2(){
   ctx.fillText("X axis: Time (YYYY-MM)",spX0+spW*.46,plotBot+24);
   ctx.restore();
 
-  S.sel.forEach((name,i)=>{
-    const c=CITY_DATA.find(x=>x.name===name); if(!c) return;
+  selNames.forEach((name,i)=>{
+    const c=CITY_BY_NAME.get(name); if(!c) return;
     const col=S.colors[name];
     const rowY=plotTop+rowH*(i+.5);
     const cpF=isFrontHemisphere(projF,c.lon,c.lat)?projF([c.lon,c.lat]):null;
@@ -1565,20 +1618,21 @@ const TL={drag:null}; // {mode:'from'|'to'|'pan', x0, from0, to0}
 function setYearRange(from,to){
   S.yfrom=Math.max(YEARS[0],Math.min(YEARS[YEARS.length-1],from));
   S.yto  =Math.max(S.yfrom, Math.min(YEARS[YEARS.length-1],to));
-  // Sync sidebar selects
-  const fy=document.getElementById("yfrom"),ty=document.getElementById("yto");
-  if(fy) fy.value=S.yfrom; if(ty) ty.value=S.yto;
+  S.mfrom = `${S.yfrom}-01`;
+  S.mto = `${S.yto}-12`;
+  syncMonthSliders();
   updateMonthsHint(); render();
 }
 
 // ── VIEW 3: Bubble Timeline ───────────────────────────────────────
 function drawV3(){
   ctx.clearRect(0,0,W,H);
-  if(!S.sel.length){noDataMsg("Select cities to see the bubble timeline");return;}
-  const n=S.sel.length;
+  const selNames=visibleSelectedNames();
+  if(!selNames.length){noDataMsg("Select cities to see the bubble timeline");return;}
+  const n=selNames.length;
   const labW=120, legH=50, topPad=52; // extra topPad for range brush
   const allMoSet=new Set();
-  S.sel.forEach(nm=>filtMo(nm).forEach(m=>allMoSet.add(m)));
+  selNames.forEach(nm=>filtMo(nm).forEach(m=>allMoSet.add(m)));
   const months=Array.from(allMoSet).sort();
   if(!months.length){noDataMsg("No data in selected time range");return;}
   const M=months.length;
@@ -1637,8 +1691,8 @@ function drawV3(){
     if(idxs[0]>0){ctx.strokeStyle="#111";ctx.lineWidth=.6;
       ctx.beginPath();ctx.moveTo(startX+idxs[0]*cellW,topPad-2);ctx.lineTo(startX+idxs[0]*cellW,topPad+plotH-legH+12);ctx.stroke();}
   });
-  S.sel.forEach((name,i)=>{
-    const c=CITY_DATA.find(x=>x.name===name); if(!c) return;
+  selNames.forEach((name,i)=>{
+    const c=CITY_BY_NAME.get(name); if(!c) return;
     const col=S.colors[name];
     const rowY=topPad+rowH*(i+.62);
     const mo=CO2_MONTHLY[name]||{};
@@ -1911,7 +1965,7 @@ function drawV5(){
   const mt=baseMt+Math.max(0,(availH-side)/2);
   const pw=side, ph=side;
 
-  const cities=CITY_DATA;
+  const cities=visibleCities();
   if(!cities.length){noDataMsg("No data for selected axes in this time range.");return;}
 
   const cityEntries=cities.map(c=>{
@@ -2084,7 +2138,7 @@ function drawV1SplitCircle(){
   if(S.flat) drawFlatMap(proj); else drawGlobe(proj,{stars:false});
 
   // Dim all non-selected
-  for(const c of CITY_DATA){
+  for(const c of visibleCities()){
     if(S.sel.includes(c.name)) continue;
     const p=proj([c.lon,c.lat]); if(!p) continue;
     ctx.beginPath(); ctx.arc(p[0],p[1],1.5,0,TAU);
@@ -2093,8 +2147,9 @@ function drawV1SplitCircle(){
 
   // Selected cities with split-circle encoding
   const selPts=[];
-  for(const name of S.sel){
-    const c=CITY_DATA.find(x=>x.name===name); if(!c) continue;
+  for(const name of visibleSelectedNames()){
+    const c=CITY_BY_NAME.get(name); if(!c) continue;
+    if(!S.flat && !isFrontHemisphere(proj,c.lon,c.lat)) continue;
     const p=proj([c.lon,c.lat]); if(!p) continue;
     const co2=S.month?(CO2_MONTHLY[name]||{})[S.month]:cityStats(name)?.avg;
     const sif=S.month?((SIF_MONTHLY[name]||{})[S.month]??_sifSim(c.lat,S.month)):getSIF(name,filtMo(name));
@@ -2208,6 +2263,7 @@ function render(){
     case 3:drawV3();break; case 4:drawV4();break; case 5:drawV5();break;
   }
   updateOverlays();
+  drawSidebarMiniGlobes();
 }
 
 // ── AUTO-ROTATE ───────────────────────────────────────────────────
@@ -2252,11 +2308,12 @@ function updateOverlays(){
   gt.textContent=S.flat?"\u2299 3D Globe":"\u26F6 2D Map";
   gt.classList.toggle("flat",S.flat);
   cv.style.cursor=(S.view<=1)?"grab":"default";
-  document.getElementById("plink").style.display=(S.view===2)?"flex":"none";
   const sc=document.getElementById("scat-ctrl");
   if(sc) sc.classList.toggle("on",S.view===4||S.view===5);
   const scCol=document.getElementById("sc-col-block");
   if(scCol) scCol.style.display=(S.view===5)?"none":"inline-flex";
+  const mini=document.getElementById("mini-globes-sec");
+  if(mini) mini.style.display=(S.view===4||S.view===5)?"block":"none";
   // hide vhdr when scatter controls are shown (they overlap)
   if(vh) vh.style.display=(S.view===4||S.view===5)?"none":"block";
   document.querySelectorAll(".dot").forEach(d=>d.classList.toggle("on",+d.dataset.v===S.view));
@@ -2317,7 +2374,7 @@ function hitTest(ex,ey){
   if(S.view===2&&S._pulseGeom){
     const pf=S._pulseGeom.front.proj, pb=S._pulseGeom.back.proj;
     let near=null,nearD=14;
-    for(const c of CITY_DATA){
+    for(const c of visibleCities()){
       const p1=isFrontHemisphere(pf,c.lon,c.lat)?pf([c.lon,c.lat]):null;
       const p2=isFrontHemisphere(pb,c.lon,c.lat)?pb([c.lon,c.lat]):null;
       if(p1){
@@ -2333,7 +2390,8 @@ function hitTest(ex,ey){
   }
   const proj=getProj(); if(!proj) return null;
   let near=null,nearD=14;
-  for(const c of CITY_DATA){
+  for(const c of visibleCities()){
+    if(S.view<=1 && !S.flat && !isFrontHemisphere(proj,c.lon,c.lat)) continue;
     const p=proj([c.lon,c.lat]); if(!p) continue;
     const d=Math.hypot(mx-p[0],my-p[1]);
     if(d<nearD){near=c;nearD=d;}
@@ -2563,27 +2621,171 @@ function buildCityList(q=""){
 
 // ── CITY SEARCH FILTER ────────────────────────────────────────────
 const srch=document.getElementById("srch");
-srch.addEventListener("input",()=>buildCityList(srch.value));
+const cityAc=document.getElementById("city-ac");
+
+function renderCitySearchSuggestions(q=""){
+  if(!cityAc) return;
+  const needle=q.trim().toLowerCase();
+  if(!needle){cityAc.classList.remove("open");cityAc.innerHTML="";return;}
+  const hits=CITY_DATA
+    .filter(c=>!S.sel.includes(c.name))
+    .filter(c=>c.name.toLowerCase().includes(needle)||c.country.toLowerCase().includes(needle))
+    .slice(0,10);
+  if(!hits.length){
+    cityAc.innerHTML='<div class="ac-it nm">No matches</div>';
+    cityAc.classList.add("open");
+    return;
+  }
+  cityAc.innerHTML="";
+  hits.forEach(c=>{
+    const row=document.createElement("div");
+    row.className="ac-it";
+    row.textContent=`${c.name}, ${c.country}`;
+    row.addEventListener("click",()=>{
+      addCity(c.name);
+      srch.value="";
+      cityAc.classList.remove("open");
+      cityAc.innerHTML="";
+      render();
+    });
+    cityAc.appendChild(row);
+  });
+  cityAc.classList.add("open");
+}
+
+srch.addEventListener("input",()=>renderCitySearchSuggestions(srch.value));
+srch.addEventListener("keydown",(e)=>{
+  if(e.key==="Escape"){cityAc.classList.remove("open");cityAc.innerHTML="";}
+  if(e.key==="Enter"){
+    const first=cityAc?.querySelector(".ac-it:not(.nm)");
+    if(first){e.preventDefault();first.click();}
+  }
+});
+document.addEventListener("click",(e)=>{
+  if(!cityAc||!srch) return;
+  if(!cityAc.contains(e.target)&&e.target!==srch) cityAc.classList.remove("open");
+});
 
 // ── TIME RANGE ────────────────────────────────────────────────────
-function buildYearSelects(){
-  const fy=document.getElementById("yfrom"), ty=document.getElementById("yto");
-  YEARS.forEach(y=>{
-    const of=document.createElement("option"),ot=document.createElement("option");
-    of.value=ot.value=y; of.textContent=ot.textContent=y;
-    fy.appendChild(of); ty.appendChild(ot);
-  });
-  fy.value=S.yfrom; ty.value=S.yto;
-  fy.addEventListener("change",()=>{
-    S.yfrom=+fy.value;
-    if(S.yto<S.yfrom){S.yto=S.yfrom;ty.value=S.yto;}
+function monthToIdx(m){return Math.max(0,ALL_MONTHS.indexOf(m));}
+function idxToMonth(i){return ALL_MONTHS[Math.max(0,Math.min(ALL_MONTHS.length-1,i))];}
+function syncMonthSliders(){
+  const fromEl=document.getElementById("mfrom-slider");
+  const toEl=document.getElementById("mto-slider");
+  const fromLbl=document.getElementById("mfrom-lbl");
+  const toLbl=document.getElementById("mto-lbl");
+  const track=document.getElementById("month-track");
+  if(fromEl) fromEl.value=String(monthToIdx(S.mfrom));
+  if(toEl) toEl.value=String(monthToIdx(S.mto));
+  if(fromLbl) fromLbl.textContent=S.mfrom;
+  if(toLbl) toLbl.textContent=S.mto;
+  if(track){
+    const a=monthToIdx(S.mfrom);
+    const b=monthToIdx(S.mto);
+    const max=Math.max(1,ALL_MONTHS.length-1);
+    const p1=(a/max)*100;
+    const p2=(b/max)*100;
+    track.style.background=`linear-gradient(90deg,#1f1f1f ${p1}%, #5d5d5d ${p1}%, #5d5d5d ${p2}%, #1f1f1f ${p2}%)`;
+  }
+}
+
+function buildMonthRangeInputs(){
+  const fromEl=document.getElementById("mfrom-slider");
+  const toEl=document.getElementById("mto-slider");
+  if(!fromEl||!toEl) return;
+  const maxIdx=String(ALL_MONTHS.length-1);
+  fromEl.max=maxIdx;
+  toEl.max=maxIdx;
+  syncMonthSliders();
+
+  fromEl.addEventListener("input",()=>{
+    let a=+fromEl.value;
+    let b=+toEl.value;
+    if(a>b){b=a;toEl.value=String(b);}
+    S.mfrom=idxToMonth(a);
+    S.mto=idxToMonth(b);
+    S.yfrom=+S.mfrom.slice(0,4);
+    S.yto=+S.mto.slice(0,4);
+    syncMonthSliders();
     updateMonthsHint(); render();
   });
-  ty.addEventListener("change",()=>{
-    S.yto=+ty.value;
-    if(S.yfrom>S.yto){S.yfrom=S.yto;fy.value=S.yfrom;}
+  toEl.addEventListener("input",()=>{
+    let a=+fromEl.value;
+    let b=+toEl.value;
+    if(b<a){a=b;fromEl.value=String(a);}
+    S.mfrom=idxToMonth(a);
+    S.mto=idxToMonth(b);
+    S.yfrom=+S.mfrom.slice(0,4);
+    S.yto=+S.mto.slice(0,4);
+    syncMonthSliders();
     updateMonthsHint(); render();
   });
+}
+
+function renderBandFilters(){
+  const el=document.getElementById("lat-band-list");
+  if(!el) return;
+  el.innerHTML="";
+  LAT_BANDS.forEach(b=>{
+    const row=document.createElement("button");
+    row.type="button";
+    row.className="band-row"+(S.activeBands.has(b.key)?" on":"");
+    row.textContent=b.label;
+    row.addEventListener("click",()=>{
+      if(S.activeBands.has(b.key)) S.activeBands.delete(b.key);
+      else S.activeBands.add(b.key);
+      if(S.activeBands.size===0) LAT_BANDS.forEach(x=>S.activeBands.add(x.key));
+      renderBandFilters();
+      updateMonthsHint();
+      render();
+    });
+    el.appendChild(row);
+  });
+}
+
+function projectMiniPoint(lon,lat,centerLon){
+  const lr=lat*Math.PI/180;
+  const d=(lon-centerLon)*Math.PI/180;
+  const x=Math.cos(lr)*Math.sin(d);
+  const y=-Math.sin(lr);
+  const z=Math.cos(lr)*Math.cos(d);
+  return z>=0 ? {x,y} : null;
+}
+
+function drawMiniGlobe(canvas,centerLon){
+  if(!canvas) return;
+  const g=canvas.getContext("2d");
+  const w=canvas.width,h=canvas.height;
+  const cx=w/2,cy=h/2,r=Math.min(w,h)*0.46;
+  g.clearRect(0,0,w,h);
+  g.fillStyle="#071325";
+  g.beginPath(); g.arc(cx,cy,r,0,TAU); g.fill();
+  g.strokeStyle="rgba(100,150,230,.45)";
+  g.lineWidth=1;
+  g.beginPath(); g.arc(cx,cy,r,0,TAU); g.stroke();
+
+  for(const c of visibleCities()){
+    const p=projectMiniPoint(c.lon,c.lat,centerLon);
+    if(!p) continue;
+    g.beginPath();
+    g.arc(cx+p.x*r,cy+p.y*r,1.1,0,TAU);
+    g.fillStyle="rgba(70,110,175,.45)";
+    g.fill();
+  }
+  for(const name of visibleSelectedNames()){
+    const c=CITY_BY_NAME.get(name); if(!c) continue;
+    const p=projectMiniPoint(c.lon,c.lat,centerLon);
+    if(!p) continue;
+    g.beginPath();
+    g.arc(cx+p.x*r,cy+p.y*r,2.4,0,TAU);
+    g.fillStyle=S.colors[name]||"#fff";
+    g.fill();
+  }
+}
+
+function drawSidebarMiniGlobes(){
+  drawMiniGlobe(document.getElementById("mini-front"),S.rot.lon||0);
+  drawMiniGlobe(document.getElementById("mini-back"),(S.rot.lon||0)+180);
 }
 
 // ── VIEW NAV ──────────────────────────────────────────────────────
@@ -2596,6 +2798,23 @@ function setView(v){
   S.view=v; hideTT(); S.hover=null;
   updateOverlays();
   setTimeout(()=>{cv.classList.remove("fade");render();},100);
+  syncGlobalTabs();
+}
+
+function setInitialViewFromQuery(){
+  const view = new URLSearchParams(window.location.search).get("view");
+  if(view==="globe") S.view = 0;
+  if(view==="comparison") S.view = 1;
+  if(view==="pulse" || view==="timeline") S.view = 2;
+  if(view==="scatter") S.view = 4;
+  if(view==="quadrant") S.view = 5;
+}
+
+function syncGlobalTabs(){
+  const tab = (S.view===5) ? "quadrant" : (S.view===4 ? "scatter" : (S.view===2 ? "pulse" : "globe"));
+  document.querySelectorAll(".global-tab").forEach(el=>{
+    el.classList.toggle("active", el.dataset.tab===tab);
+  });
 }
 document.getElementById("np").addEventListener("click",()=>setView(S.view-1));
 document.getElementById("nn").addEventListener("click",()=>setView(S.view+1));
@@ -2631,7 +2850,7 @@ function buildDots(){
   });
 }
 function buildVGrid(){
-  const el=document.getElementById("vgrid"); el.innerHTML="";
+  const el=document.getElementById("vgrid"); if(!el) return; el.innerHTML="";
   VIEWS.forEach((nm,i)=>{
     if(i===3) return; // Timeline merged into Pulse
     const b=document.createElement("button");
@@ -2642,16 +2861,18 @@ function buildVGrid(){
 
 // ── INIT ──────────────────────────────────────────────────────────
 DEFAULT_SEL.forEach(n=>addCity(n));
-buildDots(); buildVGrid(); buildYearSelects();
-buildCityList();
+buildDots(); buildVGrid(); buildMonthRangeInputs();
+renderBandFilters();
 updateMonthsHint();
 setupSidebarResize();
+setInitialViewFromQuery();
 resize();
 window.addEventListener("resize",resize);
 requestAnimationFrame(animTick);
 
 // Land data embedded — no CDN needed
 document.getElementById("ldg").style.display="none";
+syncGlobalTabs();
 render();
 </script>
 </body>
