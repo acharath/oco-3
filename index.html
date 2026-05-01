@@ -2,127 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OCO-3 CO₂ Visualizations</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: #050505;
-      color: #ccc;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0;
-    }
-
-    .title-block {
-      text-align: center;
-      margin-bottom: 52px;
-    }
-    .title-block h1 {
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: #444;
-      margin-bottom: 10px;
-    }
-    .title-block p {
-      font-size: 11px;
-      color: #2a2a2a;
-      letter-spacing: 0.08em;
-    }
-
-    .cards {
-      display: flex;
-      gap: 24px;
-    }
-
-    .card {
-      width: 280px;
-      background: #080808;
-      border: 1px solid #141414;
-      border-radius: 10px;
-      padding: 28px 26px 24px;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      transition: border-color 0.18s, background 0.18s;
-      cursor: pointer;
-    }
-    .card:hover {
-      border-color: #2a2a2a;
-      background: #0c0c0c;
-    }
-
-    .card-icon {
-      font-size: 32px;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-
-    .card h2 {
-      font-size: 15px;
-      font-weight: 600;
-      color: #e0e0e0;
-      letter-spacing: 0.01em;
-    }
-
-    .card p {
-      font-size: 12px;
-      color: #555;
-      line-height: 1.6;
-    }
-
-    .card-tag {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 10px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: 3px;
-      align-self: flex-start;
-    }
-
-    .tag-globe  { background: #0d1f2d; color: #4dbbff; }
-    .tag-chart  { background: #0e1a0e; color: #39ff14; }
-    .tag-compare { background: #1a0d12; color: #ff1493; }
-  </style>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OCO-3 CO2 Explorer</title>
+  <meta http-equiv="refresh" content="0; url=compare/index.html?view=globe">
 </head>
 <body>
-  <div class="title-block">
-    <h1>OCO-3 CO₂ Data Explorer</h1>
-    <p>co2_sam.csv · Choose a visualization</p>
-  </div>
-
-  <div class="cards">
-    <a class="card" href="globe/index.html">
-      <div class="card-icon">🌐</div>
-      <h2>3D Globe</h2>
-      <p>Interactive rotating globe showing XCO₂ readings as colored point clouds. Scrub through time, click clusters for details.</p>
-      <span class="card-tag tag-globe">p5.js · WebGL</span>
-    </a>
-
-    <a class="card" href="timeseries/index.html">
-      <div class="card-icon">📈</div>
-      <h2>City Timeseries</h2>
-      <p>Pick any set of cities and overlay their monthly average CO₂ timeseries. Shows cross-city mean with shaded ±1 std dev band.</p>
-      <span class="card-tag tag-chart">Chart.js · CSV stream</span>
-    </a>
-
-    <a class="card" href="compare/index.html">
-      <div class="card-icon">🏙️</div>
-      <h2>City CO₂ Explorer</h2>
-      <p>Multi-view city comparison: 3D globe, proportional bubbles, pulse timeseries, bubble timeline, and CO₂ vs SIF scatter. Uses Ahn et al. 2025 emission data.</p>
-      <span class="card-tag tag-compare">5 views · Ahn et al. 2025</span>
-    </a>
-  </div>
+  <script>
+    window.location.replace("compare/index.html?view=globe");
+  </script>
 </body>
 </html>

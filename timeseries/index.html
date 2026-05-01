@@ -78,6 +78,50 @@
       color: #888;
     }
 
+    .top-tabs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 10px 6px;
+      border-bottom: 1px solid #121212;
+      background: #050505;
+      flex-shrink: 0;
+    }
+    .top-tab {
+      min-width: 166px;
+      height: 21px;
+      border-radius: 4px;
+      border: 1px solid #1f1f1f;
+      background: #0d0d0d;
+      color: #4f4f4f;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-size: 8.5px;
+      font-weight: 600;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .top-tab:hover { border-color: #2b2b2b; color: #b6b6b6; }
+    .top-tab small {
+      color: #3e3e3e;
+      font-size: 8px;
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0.015em;
+    }
+    .top-tab.active {
+      border-color: #6d6d6d;
+      background: #0a0a0a;
+      color: #f1f1f1;
+      box-shadow: inset 0 0 0 1px #161616;
+    }
+    .top-tab.active small { color: #888; }
+
     /* ── Layout ── */
     .main {
       display: flex;
@@ -443,6 +487,13 @@
 </head>
 
 <body>
+  <nav class="top-tabs" aria-label="Visualization switcher">
+    <a class="top-tab" href="../compare/index.html?view=globe">Globe <small>Spatial Comparison</small></a>
+    <a class="top-tab" href="../compare/index.html?view=pulse">Pulse <small>Temporal Exploration</small></a>
+    <a class="top-tab active" href="./index.html">Timeseries <small>City Trends</small></a>
+    <a class="top-tab" href="../compare/index.html?view=scatter">Scatter <small>Variable Correlation</small></a>
+    <a class="top-tab" href="../compare/index.html?view=quadrant">Quadrant <small>Anomaly Detection</small></a>
+  </nav>
 
   <header>
     <h1>CO₂ City Timeseries</h1>
@@ -450,7 +501,7 @@
       <div id="prog"></div>
     </div>
     <span id="prog-text">Loading data…</span>
-    <a class="header-link" href="../index.html">← Back</a>
+    <a class="header-link" href="../compare/index.html?view=globe">← Globe</a>
   </header>
 
   <div class="main">
