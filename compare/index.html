@@ -102,20 +102,60 @@ body{display:flex;flex-direction:column}
 .months-hint{font-size:9px;color:var(--t3);margin-top:5px}
 .slider-col{margin-bottom:7px}
 .slider-head{display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#6b6b6b;margin-bottom:4px}
-.range-dual{position:relative;height:18px}
-.range-track{position:absolute;left:0;right:0;top:8px;height:3px;border-radius:2px;background:#1f1f1f}
-.m-slider{position:absolute;left:0;right:0;top:1px;width:100%;height:14px;accent-color:#6a6a6a;background:transparent}
-.m-slider::-webkit-slider-runnable-track{height:3px;background:transparent}
-.m-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:11px;height:11px;border-radius:50%;background:#8a8a8a;border:1px solid #3d3d3d;margin-top:-4px}
-.m-slider::-moz-range-track{height:3px;background:transparent}
-.m-slider::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:#8a8a8a;border:1px solid #3d3d3d}
-.band-list{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-.band-row{padding:4px 6px;border:1px solid #222;border-radius:4px;font-size:9px;color:#666;background:#0e0e0e;cursor:pointer;user-select:none;transition:all .12s}
-.band-row:hover{border-color:#333;color:#b1b1b1}
-.band-row.on{border-color:#4a4a4a;color:#dadada;background:#141414}
-.mini-globes{display:flex;gap:8px;justify-content:space-between}
+.range-dual{position:relative;height:12px}
+.range-track{position:absolute;left:0;right:0;top:5px;height:2px;border-radius:2px;background:#1f1f1f}
+.m-slider{position:absolute;left:0;right:0;top:0;width:100%;height:10px;accent-color:#6a6a6a;background:transparent}
+.m-slider::-webkit-slider-runnable-track{height:2px;background:transparent}
+.m-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:8px;height:8px;border-radius:50%;background:#6a6a6a;border:1px solid #2d2d2d;margin-top:-3px}
+.m-slider::-moz-range-track{height:2px;background:transparent}
+.m-slider::-moz-range-thumb{width:8px;height:8px;border-radius:50%;background:#6a6a6a;border:1px solid #2d2d2d}
+/* Latitude bands (Timeseries component) */
+.bp-sub{font-size:10px;color:#2d2d2d;margin-top:2px}
+.bp-globe-wrap{padding:10px 0 8px;border-bottom:1px solid #0e0e0e;display:flex;justify-content:center;margin-bottom:4px}
+#band-globe{display:block;cursor:default}
+#lat-band-list{max-height:220px;overflow-y:auto}
+#lat-band-list::-webkit-scrollbar{width:3px}
+#lat-band-list::-webkit-scrollbar-thumb{background:#1e1e1e;border-radius:2px}
+.band-row{padding:7px 2px;cursor:pointer;user-select:none;transition:background .08s;border-bottom:1px solid #0c0c0c;background:transparent;border-radius:0;border-left:none;border-right:none;border-top:none}
+.band-row:hover{background:#0d0d0d}
+.band-row.on{background:#080f0d}
+.band-row-top{display:flex;align-items:center;gap:7px;margin-bottom:2px}
+.band-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;opacity:.2;transition:opacity .15s,box-shadow .15s}
+.band-row.on .band-dot{opacity:1;box-shadow:0 0 6px currentColor}
+.band-label{font-size:11px;color:#777;transition:color .1s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.band-row.on .band-label{color:#ddd}
+.band-range{font-size:9px;color:#252525;padding-left:15px;transition:color .1s}
+.band-row.on .band-range{color:#3a3a3a}
+.band-line-swatch{width:16px;height:2px;flex-shrink:0;background:repeating-linear-gradient(90deg,currentColor 0,currentColor 5px,transparent 5px,transparent 9px);opacity:.35;margin-left:auto;transition:opacity .15s}
+.band-row.on .band-line-swatch{opacity:1}
+/* Nav flow arrows */
+.global-tabs{gap:0!important}
+.tab-arrow{display:inline-flex;align-items:center;justify-content:center;width:20px;height:21px;color:#252525;font-size:12px;flex-shrink:0;transition:transform .25s;user-select:none}
+.tab-arrow.active{transform:scale(1.2)}
+.global-tabs.flow-forward .tab-arrow.sliding{animation:arrowSlideFwd .48s ease}
+.global-tabs.flow-back .tab-arrow.sliding{animation:arrowSlideBack .48s ease}
+@keyframes arrowSlideFwd{0%{transform:translateX(-4px);opacity:.35}45%{transform:translateX(3px);opacity:1}100%{transform:translateX(0);opacity:.55}}
+@keyframes arrowSlideBack{0%{transform:translateX(4px);opacity:.35}45%{transform:translateX(-3px);opacity:1}100%{transform:translateX(0);opacity:.55}}
+/* Timeseries panel */
+.ts-panel{position:absolute;inset:0;display:flex;flex-direction:column;padding:16px 20px 14px;background:var(--bg);z-index:2}
+.ts-panel[hidden]{display:none!important}
+.ts-head{display:flex;align-items:center;gap:12px;flex-shrink:0;margin-bottom:12px}
+.ts-head h2{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.ts-prog-wrap{flex:1;max-width:220px;height:3px;background:#161616;border-radius:2px;overflow:hidden}
+#ts-prog{height:100%;width:0;background:linear-gradient(90deg,#00f5ff,#bf00ff);transition:width .15s linear}
+#ts-status{font-size:10px;color:#444;white-space:nowrap}
+.ts-meta{display:flex;gap:12px;flex-shrink:0;margin-bottom:10px}
+.ts-meta-item{display:flex;align-items:center;gap:5px;font-size:10px;color:#555}
+.ts-meta-dash{width:18px;height:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.8) 0,rgba(255,255,255,.8) 5px,transparent 5px,transparent 9px)}
+.ts-meta-band{width:18px;height:8px;background:rgba(255,255,255,.1);border-radius:1px}
+.ts-chart-wrap{flex:1;position:relative;min-height:0;padding-bottom:8px}
+#ts-chart{width:100%!important;height:100%!important}
+.ts-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#1e1e1e;font-size:14px;text-align:center;pointer-events:none;line-height:1.6}
+#pulse-morph-layer{position:absolute;inset:0;pointer-events:none;z-index:45;overflow:visible}
+.pulse-morph-globe{position:absolute;border-radius:50%;overflow:hidden;box-shadow:0 0 24px rgba(40,120,255,.4);will-change:transform,width,height,left,top,opacity}
+.mini-globes{display:flex;flex-direction:column;gap:8px;align-items:center}
 .mini-globe{display:flex;flex-direction:column;align-items:center;gap:4px}
-.mini-globe canvas{width:84px;height:84px;border:1px solid #1a1a1a;border-radius:50%;background:#070707}
+.mini-globe canvas{width:84px;height:84px;border:1px solid #2a2a2a;border-radius:50%;background:#0a0a0a}
 .mini-globe span{font-size:8px;color:#5f5f5f;letter-spacing:.08em;text-transform:uppercase}
 .sb-foot{padding:10px 16px 14px;border-top:1px solid var(--b1);flex-shrink:0;margin-top:auto}
 .back-lnk{font-size:9px;color:#252525;text-decoration:none;display:block;text-align:center}
@@ -187,12 +227,16 @@ body{display:flex;flex-direction:column}
 </style>
 </head>
 <body>
-<nav class="global-tabs" aria-label="Visualization switcher">
-  <a class="global-tab" data-tab="globe" href="?view=globe">Globe <small>Spatial Comparison</small></a>
-  <a class="global-tab" data-tab="pulse" href="?view=pulse">Pulse <small>Temporal Exploration</small></a>
-  <a class="global-tab" data-tab="timeseries" href="../timeseries/index.html">Timeseries <small>City Trends</small></a>
-  <a class="global-tab" data-tab="scatter" href="?view=scatter">Scatter <small>Variable Correlation</small></a>
-  <a class="global-tab" data-tab="quadrant" href="?view=quadrant">Quadrant <small>Anomaly Detection</small></a>
+<nav class="global-tabs" id="global-tabs" aria-label="Visualization switcher">
+  <a class="global-tab" data-tab="globe" data-nav-idx="0" href="?view=globe">Globe <small>Spatial Comparison</small></a>
+  <span class="tab-arrow" data-arrow="0" aria-hidden="true">→</span>
+  <a class="global-tab" data-tab="pulse" data-nav-idx="1" href="?view=pulse">Pulse <small>Temporal Exploration</small></a>
+  <span class="tab-arrow" data-arrow="1" aria-hidden="true">→</span>
+  <a class="global-tab" data-tab="timeseries" data-nav-idx="2" href="?view=timeseries">Timeseries <small>City Trends</small></a>
+  <span class="tab-arrow" data-arrow="2" aria-hidden="true">→</span>
+  <a class="global-tab" data-tab="scatter" data-nav-idx="3" href="?view=scatter">Scatter <small>Variable Correlation</small></a>
+  <span class="tab-arrow" data-arrow="3" aria-hidden="true">→</span>
+  <a class="global-tab" data-tab="quadrant" data-nav-idx="4" href="?view=quadrant">Quadrant <small>Anomaly Detection</small></a>
 </nav>
 <div class="app-shell">
 
@@ -225,16 +269,20 @@ body{display:flex;flex-direction:column}
       </div>
       <div class="months-hint" id="mhint"></div>
     </div>
-    <div class="sb-sec">
-      <div class="sb-lbl">Latitude Bands <span class="sb-lbl-hint">filter all views</span></div>
-      <div class="band-list" id="lat-band-list"></div>
-    </div>
     <div class="sb-sec" id="mini-globes-sec">
       <div class="sb-lbl">Scatter/Quadrant Globes</div>
       <div class="mini-globes">
         <div class="mini-globe"><canvas id="mini-front" width="84" height="84"></canvas><span>Front</span></div>
         <div class="mini-globe"><canvas id="mini-back" width="84" height="84"></canvas><span>Back</span></div>
       </div>
+    </div>
+    <div class="sb-sec" id="lat-bands-sec">
+      <div class="sb-lbl">Latitude Bands <span class="sb-lbl-hint">filter all views</span></div>
+      <p class="bp-sub">Toggle regional averages</p>
+      <div class="bp-globe-wrap">
+        <canvas id="band-globe" width="156" height="112"></canvas>
+      </div>
+      <div id="lat-band-list"></div>
     </div>
   </div>
   <div class="sb-foot">
@@ -245,7 +293,23 @@ body{display:flex;flex-direction:column}
 
 <div class="stage" id="stage">
   <canvas id="cv"></canvas>
-  <div id="ldg"><div class="ldg-sp"></div><span>Loading world map&#x2026;</span></div>
+  <div id="pulse-morph-layer" aria-hidden="true"></div>
+  <div id="ts-panel" class="ts-panel" hidden>
+    <div class="ts-head">
+      <h2>CO₂ City Timeseries</h2>
+      <div class="ts-prog-wrap"><div id="ts-prog"></div></div>
+      <span id="ts-status">Loading data…</span>
+    </div>
+    <div class="ts-meta">
+      <div class="ts-meta-item"><div class="ts-meta-dash"></div><span>Avg of selected cities</span></div>
+      <div class="ts-meta-item"><div class="ts-meta-band"></div><span>±1 std dev</span></div>
+    </div>
+    <div class="ts-chart-wrap">
+      <p class="ts-hint" id="ts-hint">Select cities in the sidebar<br>or toggle latitude bands</p>
+      <canvas id="ts-chart"></canvas>
+    </div>
+  </div>
+<div id="ldg"><div class="ldg-sp"></div><span>Loading world map&#x2026;</span></div>
   <div id="tt">
     <div class="tt-name" id="tt-name"></div>
     <div id="tt-body"></div>
@@ -301,6 +365,9 @@ body{display:flex;flex-direction:column}
 
 <script src="lib/d3.min.js"></script>
 <script src="lib/topojson.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script src="timeseries-view.js"></script>
 <script>
 "use strict";
 // ── DATA ─────────────────────────────────────────────────────────
@@ -381,12 +448,12 @@ const PAL = [
 ];
 
 // ── VIEW NAMES ────────────────────────────────────────────────────
-const VIEWS = ['Globe','Comparison','Pulse / Timeline','','Scatter','Quadrant'];
+const VIEWS = ['Globe','Comparison','Pulse / Timeline','Timeseries','Scatter','Quadrant'];
 const VHINTS = [
   'Rotating globe — click a city to select it',
   'Comparison map — size = XCO₂ deviation, colour = CO₂/SIF split',
-  'Pulse & Timeline — timeseries + heatgrid for selected cities',
-  '',
+  'Pulse & Timeline — heatgrid + sparklines for selected cities',
+  'City CO₂ trends — monthly averages from OCO-3 SAM',
   'Scatter plot — customisable axes',
   'Quadrant view — 4-category median split'
 ];
@@ -401,12 +468,13 @@ const ALL_MONTHS = (()=>{
 const MIN_MONTH = ALL_MONTHS[0];
 const MAX_MONTH = ALL_MONTHS[ALL_MONTHS.length-1];
 const LAT_BANDS = [
-  {key:'arctic',label:'60N-90N',latMin:60,latMax:90},
-  {key:'mid_north',label:'30N-60N',latMin:30,latMax:60},
-  {key:'tropics',label:'30S-30N',latMin:-30,latMax:30},
-  {key:'mid_south',label:'30S-60S',latMin:-60,latMax:-30},
-  {key:'antarctic',label:'60S-90S',latMin:-90,latMax:-60}
+  {key:'arctic',label:'Arctic',range:'60°N – 90°N',latMin:60,latMax:90,color:'#93d5f7'},
+  {key:'mid_north',label:'N. Mid-latitudes',range:'30°N – 60°N',latMin:30,latMax:60,color:'#5b8ff9'},
+  {key:'tropics',label:'Tropics',range:'30°S – 30°N',latMin:-30,latMax:30,color:'#ffc444'},
+  {key:'mid_south',label:'S. Mid-latitudes',range:'30°S – 60°S',latMin:-60,latMax:-30,color:'#29d8a8'},
+  {key:'antarctic',label:'Antarctic',range:'60°S – 90°S',latMin:-90,latMax:-60,color:'#be8fff'}
 ];
+const VIEW_NAV_MAP={0:0,1:0,2:1,3:2,4:3,5:4};
 const CITY_BY_NAME = new Map(CITY_DATA.map(c=>[c.name,c]));
 
 // ── SCATTER VARIABLE DEFINITIONS ─────────────────────────────────
@@ -1137,12 +1205,10 @@ function drawV0(){
     const proj=mkGlobe(W/2,H/2,sc);
     drawGlobe(proj,{stars:false});
     drawDots(proj,{selR:7});
-    drawMinimap();
   } else {
     const proj=mkFlat(W/2,H/2,W/6.6);
     drawFlatMap(proj);
     drawDots(proj,{selR:7});
-    drawMinimap();
   }
   ctx.save();
   ctx.fillStyle="rgba(5,5,5,.8)"; ctx.fillRect(12,12,224,18);
@@ -1275,7 +1341,7 @@ function drawV2(){
   ctx.beginPath(); ctx.roundRect(tX+2,tY+2,tW/2-3,tH-4,3); ctx.fill();
   ctx.fillStyle=!leftOn?"rgba(0,245,255,.13)":"rgba(0,0,0,0)";
   ctx.beginPath(); ctx.roundRect(tX+tW/2+1,tY+2,tW/2-3,tH-4,3); ctx.fill();
-  ctx.fillStyle=leftOn?"#9ffcff":"#6f7f97"; ctx.font="10px Segoe UI,sans-serif";
+  ctx.fillStyle=leftOn?"#9ffcff":"#6f7f97"; ctx.font="9.5px Segoe UI,sans-serif";
   ctx.textAlign="center"; ctx.textBaseline="middle";
   ctx.fillText("Pulse",tX+tW*.25,tY+tH/2);
   ctx.fillStyle=!leftOn?"#9ffcff":"#6f7f97";
@@ -1301,7 +1367,7 @@ function drawV2(){
     const bandH=Math.max(5,Math.min(12,rowH2*.32));
 
     // Toggle for timeline metric mode (raw values vs difference from mean)
-    const t2W=204,t2H=22,t2X=tX-t2W-8,t2Y=tY+1;
+    const t2W=204,t2H=22,t2X=tX-t2W-12,t2Y=tY+1;
     S._v2tlTog={x:t2X,y:t2Y,w:t2W,h:t2H};
     const rawOn=S.v2timelineMetric==='raw';
     ctx.fillStyle="rgba(7,9,13,.92)";
@@ -1311,11 +1377,11 @@ function drawV2(){
     ctx.beginPath(); ctx.roundRect(t2X+2,t2Y+2,t2W/2-3,t2H-4,3); ctx.fill();
     ctx.fillStyle=!rawOn?"rgba(0,245,255,.13)":"rgba(0,0,0,0)";
     ctx.beginPath(); ctx.roundRect(t2X+t2W/2+1,t2Y+2,t2W/2-3,t2H-4,3); ctx.fill();
-    ctx.fillStyle=rawOn?"#9ffcff":"#6f7f97"; ctx.font="9px Segoe UI,sans-serif";
+    ctx.fillStyle=rawOn?"#9ffcff":"#6f7f97"; ctx.font="8.5px Segoe UI,sans-serif";
     ctx.textAlign="center"; ctx.textBaseline="middle";
     ctx.fillText("City Values",t2X+t2W*.25,t2Y+t2H/2);
     ctx.fillStyle=!rawOn?"#9ffcff":"#6f7f97";
-    ctx.fillText("Difference vs Mean",t2X+t2W*.75,t2Y+t2H/2);
+    ctx.fillText("Diff vs Mean",t2X+t2W*.75,t2Y+t2H/2);
 
     // Monthly means across selected cities
     const meanCo2={},meanSif={};
@@ -1356,10 +1422,10 @@ function drawV2(){
     const yBkt={};
     months.forEach((m,i)=>{const y=m.slice(0,4);if(!yBkt[y])yBkt[y]=[];yBkt[y].push(i);});
     ctx.save();
-    ctx.fillStyle="#666"; ctx.font="9px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="top";
+    ctx.fillStyle="#666"; ctx.font="8px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="top";
     Object.entries(yBkt).forEach(([yr,idxs])=>{
       const mi=(idxs[0]+idxs[idxs.length-1])/2;
-      ctx.fillText(yr,startX+mi*cellW+cellW/2,rowsTop-14);
+      ctx.fillText(yr,startX+mi*cellW+cellW/2,rowsTop-18);
       if(idxs[0]>0){
         ctx.strokeStyle="#111";ctx.lineWidth=.6;
         ctx.beginPath();ctx.moveTo(startX+idxs[0]*cellW,rowsTop-2);ctx.lineTo(startX+idxs[0]*cellW,rowsTop+plotH-legH+12);ctx.stroke();
@@ -1368,10 +1434,10 @@ function drawV2(){
 
     // Mean section at top (per month)
     const mY0=topPad, mBandH=11;
-    ctx.font="8px Segoe UI,sans-serif"; ctx.textAlign="right"; ctx.textBaseline="middle";
+    ctx.font="7.5px Segoe UI,sans-serif"; ctx.textAlign="right"; ctx.textBaseline="middle";
     ctx.fillStyle="rgba(150,160,180,.75)";
-    ctx.fillText("Mean CO2",startX-6,mY0+mBandH/2);
-    ctx.fillText("Mean SIF",startX-6,mY0+mBandH+1+mBandH/2);
+    ctx.fillText("Mean CO2",startX-8,mY0+mBandH/2);
+    ctx.fillText("Mean SIF",startX-8,mY0+mBandH+1+mBandH/2);
     months.forEach((m,j)=>{
       const x=startX+j*cellW;
       const mc=meanCo2[m], ms=meanSif[m];
@@ -1413,8 +1479,8 @@ function drawV2(){
       ctx.font="bold 11px Segoe UI,sans-serif"; ctx.fillStyle=col;
       ctx.textAlign="right"; ctx.textBaseline="middle";
       ctx.fillText(name.length>15?name.slice(0,14)+"…":name,spX0+labW-9,rowY);
-      ctx.font="8px Segoe UI,sans-serif"; ctx.fillStyle="#888";
-      ctx.fillText(c.country.split(" ").pop(),spX0+labW-9,rowY+13);
+      ctx.font="8px Segoe UI,sans-serif"; ctx.fillStyle="#999";
+      ctx.fillText(c.country.split(" ").pop(),spX0+labW-9,rowY+12);
 
       // Row backgrounds for the two stacked bands
       ctx.fillStyle="rgba(18,18,18,.42)";
@@ -1482,17 +1548,17 @@ function drawV2(){
       });
 
       // Labels "CO2" and "SIF" at left of each band's row
-      ctx.font="7px Segoe UI,sans-serif"; ctx.fillStyle="rgba(140,150,170,.75)";
+      ctx.font="6.5px Segoe UI,sans-serif"; ctx.fillStyle="rgba(140,150,170,.75)";
       ctx.textAlign="right"; ctx.textBaseline="middle";
-      ctx.fillText("CO2",startX-4,yCO2+bandH/2);
-      ctx.fillText("SIF",startX-4,ySIF+bandH/2);
+      ctx.fillText("CO2",startX-6,yCO2+bandH/2);
+      ctx.fillText("SIF",startX-6,ySIF+bandH/2);
     });
     ctx.fillStyle="#111"; ctx.fillRect(spX0+labW,H-legH,W-(spX0+labW),legH);
-    ctx.fillStyle="#aaa"; ctx.font="9px Segoe UI,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="top";
+    ctx.fillStyle="#999"; ctx.font="8px Segoe UI,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="top";
     const lg=S.v2timelineMetric==='raw'
-      ?"TOP BAND = CO2 (white -> red, per-city scale)   |   BOTTOM BAND = SIF (white -> green, per-city scale)"
-      :"TOP BAND = CO2 - mean (blue -> white -> red; negative to positive)   |   BOTTOM BAND = SIF - mean (purple -> white -> green; negative to positive)";
-    ctx.fillText(lg,spX0+labW+14,H-legH+8);
+      ?"TOP = CO2 (white→red, per-city) | BOTTOM = SIF (white→green, per-city)"
+      :"TOP = CO2 - mean (blue→white→red) | BOTTOM = SIF - mean (purple→white→green)";
+    ctx.fillText(lg,spX0+labW+12,H-legH+16);
     ctx.restore();
     return;
   }
@@ -1529,16 +1595,16 @@ function drawV2(){
     ctx.fillRect(x-1,plotTop-6,Math.max(2,xSc*.94),plotBot-plotTop+12);
   });
   // Axis titles (x-axis unchanged as requested)
-  ctx.fillStyle="#9aaacd"; ctx.font="9px Segoe UI,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
-  ctx.fillText("XCO2 time series (per-city y-scale)",spX0,plotTop-14);
+  ctx.fillStyle="#9aaacd"; ctx.font="8.5px Segoe UI,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+  ctx.fillText("XCO2 time series (per-city y-scale)",spX0,plotTop-20);
   ctx.save();
-  ctx.translate(spX0-34,(plotTop+plotBot)/2);
+  ctx.translate(spX0-40,(plotTop+plotBot)/2);
   ctx.rotate(-Math.PI/2);
-  ctx.fillStyle="#9aaacd"; ctx.font="9px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+  ctx.fillStyle="#9aaacd"; ctx.font="8.5px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
   ctx.fillText("Y axis: XCO2 (ppm, per row)",0,0);
   ctx.restore();
-  ctx.fillStyle="#9aaacd"; ctx.font="9px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="top";
-  ctx.fillText("X axis: Time (YYYY-MM)",spX0+spW*.46,plotBot+24);
+  ctx.fillStyle="#9aaacd"; ctx.font="8.5px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="top";
+  ctx.fillText("X axis: Time (YYYY-MM)",spX0+spW*.46,plotBot+30);
   ctx.restore();
 
   selNames.forEach((name,i)=>{
@@ -1571,10 +1637,10 @@ function drawV2(){
     ctx.beginPath(); ctx.moveTo(spX0,yMid); ctx.lineTo(spX0+spW*.92,yMid);
     ctx.strokeStyle="rgba(95,120,165,.2)"; ctx.lineWidth=.55; ctx.stroke();
     // Per-row y labels
-    ctx.fillStyle=ha(col,.78); ctx.font="8px Segoe UI,sans-serif"; ctx.textAlign="right"; ctx.textBaseline="middle";
-    ctx.fillText(rMax.toFixed(1)+" ppm",spX0-10,yTop+1);
-    ctx.fillText(rMid.toFixed(1)+" ppm",spX0-10,yMid);
-    ctx.fillText(rMin.toFixed(1)+" ppm",spX0-10,yBot-1);
+    ctx.fillStyle=ha(col,.78); ctx.font="7.5px Segoe UI,sans-serif"; ctx.textAlign="right"; ctx.textBaseline="middle";
+    ctx.fillText(rMax.toFixed(1)+" ppm",spX0-12,yTop+1);
+    ctx.fillText(rMid.toFixed(1)+" ppm",spX0-12,yMid);
+    ctx.fillText(rMin.toFixed(1)+" ppm",spX0-12,yBot-1);
 
     const mo=CO2_MONTHLY[name]||{};
     let started=false;
@@ -1597,11 +1663,11 @@ function drawV2(){
 
     ctx.font="bold 11px Segoe UI,sans-serif"; ctx.fillStyle=col;
     ctx.textAlign="left"; ctx.textBaseline="bottom";
-    ctx.fillText(name,spX0,yTop-4);
-    ctx.font="9px Segoe UI,sans-serif"; ctx.fillStyle=ha(col,.65);
+    ctx.fillText(name,spX0,yTop-8);
+    ctx.font="8px Segoe UI,sans-serif"; ctx.fillStyle=ha(col,.7);
     const curr=mo[lastMo];
     const currTxt=curr!=null?curr.toFixed(2)+" ppm":"no point";
-    ctx.fillText("latest: "+currTxt+" · avg "+stats.avg.toFixed(2)+" ppm · "+cMo.length+" months",spX0,yTop-14);
+    ctx.fillText("latest: "+currTxt+" · avg "+stats.avg.toFixed(2)+" ppm · "+cMo.length+" months",spX0,yTop-19);
     // Row-level blackout repaint so masked section remains opaque above lines
     allMo.forEach((m,j)=>{
       if(!isBlackoutMonth(m)) return;
@@ -2258,6 +2324,19 @@ function drawV1SplitCircle(){
 // ── RENDER ────────────────────────────────────────────────────────
 function render(){
   if(!W||!H) return;
+  const tsPanel=document.getElementById("ts-panel");
+  const showingTs=S.view===3;
+  if(tsPanel){
+    tsPanel.hidden=!showingTs;
+    cv.style.visibility=showingTs?"hidden":"visible";
+  }
+  if(showingTs){
+    updateOverlays();
+    drawSidebarMiniGlobes();
+    drawBandGlobe();
+    if(window.TimeseriesView) TimeseriesView.update(S);
+    return;
+  }
   switch(S.view){
     case 0:drawV0();break; case 1:drawV1SplitCircle();break; case 2:drawV2();break;
     case 3:drawV3();break; case 4:drawV4();break; case 5:drawV5();break;
@@ -2304,10 +2383,10 @@ function updateOverlays(){
   const vh=document.getElementById("vhdr");
   vh.innerHTML=`<h2>${VIEWS[S.view]}</h2><p>${VHINTS[S.view]}</p>`;
   const gt=document.getElementById("gtog");
-  gt.style.display=(S.view<=1)?"block":"none";
+  gt.style.display=(S.view===0||S.view===1)?"block":"none";
   gt.textContent=S.flat?"\u2299 3D Globe":"\u26F6 2D Map";
   gt.classList.toggle("flat",S.flat);
-  cv.style.cursor=(S.view<=1)?"grab":"default";
+  cv.style.cursor=(S.view===0||S.view===1)?"grab":"default";
   const sc=document.getElementById("scat-ctrl");
   if(sc) sc.classList.toggle("on",S.view===4||S.view===5);
   const scCol=document.getElementById("sc-col-block");
@@ -2560,6 +2639,7 @@ function toggleCity(name){
 }
 function addCity(name){
   if(S.sel.includes(name)) return;
+  if(S.sel.length>=6) return;
   S.sel.push(name); S.colors[name]=PAL[S.sel.length-1];
   rebuildChips(); updateMonthsHint();
 }
@@ -2591,27 +2671,26 @@ function buildCityList(q=""){
   const lq=q.toLowerCase();
   const list=CITY_DATA.filter(c=>!lq||c.name.toLowerCase().includes(lq)||c.country.toLowerCase().includes(lq));
   if(!list.length){el.innerHTML=`<div class="city-list-empty">No cities match</div>`;return;}
-  // Sort: selected first, then Ahn-enriched (have co2 data), then alphabetical
-  list.sort((a,b)=>{
-    const as=S.sel.includes(a.name),bs=S.sel.includes(b.name);
-    if(as&&!bs) return -1; if(bs&&!as) return 1;
+  // Filter out already selected cities from the list
+  const unselected=list.filter(c=>!S.sel.includes(c.name));
+  if(!unselected.length){el.innerHTML=`<div class="city-list-empty">All cities selected</div>`;return;}
+  // Sort: Ahn-enriched (have co2 data) first, then alphabetical
+  unselected.sort((a,b)=>{
     if(a.co2!=null&&b.co2==null) return -1; if(b.co2!=null&&a.co2==null) return 1;
     return a.name.localeCompare(b.name);
   });
   el.innerHTML="";
-  list.forEach(c=>{
-    const isSel=S.sel.includes(c.name);
-    const col=S.colors[c.name]||null;
+  unselected.forEach(c=>{
     const div=document.createElement("div");
-    div.className="city-item"+(isSel?" sel":"");
+    div.className="city-item";
     // Badge: show CO2 emissions for Ahn cities, or "OCO" for CSV-only
     const badge=c.co2!=null
       ?`<div class="ci-co2">${c.co2.toFixed(0)}</div>`
       :`<div class="ci-co2" style="color:#2a3a3a;font-size:8px">OCO</div>`;
     div.innerHTML=
-      `<div class="ci-dot" style="${isSel?`background:${col};border-color:${col};box-shadow:0 0 4px ${col}44`:``}"></div>`+
+      `<div class="ci-dot"></div>`+
       `<div class="ci-text">`+
-        `<div class="ci-name" style="${isSel?`color:${col}`:``}">${c.name}</div>`+
+        `<div class="ci-name">${c.name}</div>`+
         `<div class="ci-country">${c.country.replace("Kingdom of ","").replace("French Republic","France")}</div>`+
       `</div>`+badge;
     div.addEventListener("click",()=>{toggleCity(c.name);});
@@ -2722,25 +2801,104 @@ function buildMonthRangeInputs(){
   });
 }
 
+function roundRect(ctx,x,y,w,h,r){
+  if(ctx.roundRect) ctx.roundRect(x,y,w,h,r);
+  else{
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r);
+    ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h);
+    ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+  }
+}
+
+function drawBandGlobe(){
+  const cnv=document.getElementById("band-globe");
+  if(!cnv) return;
+  const g=cnv.getContext("2d");
+  const W=156,H=112;
+  g.clearRect(0,0,W,H);
+  const barW=22,barH=90,bx=46,by=(H-barH)/2,r=barW/2;
+  g.save();
+  g.beginPath(); roundRect(g,bx,by,barW,barH,r); g.clip();
+  const segH=barH/LAT_BANDS.length;
+  LAT_BANDS.forEach((band,i)=>{
+    const on=S.activeBands.has(band.key);
+    const y=by+i*segH;
+    g.globalAlpha=on?.9:.12;
+    g.fillStyle=band.color;
+    g.fillRect(bx,y,barW,segH+.5);
+  });
+  g.globalAlpha=1;
+  g.restore();
+  g.strokeStyle="#1e1e1e"; g.lineWidth=1;
+  g.beginPath(); roundRect(g,bx,by,barW,barH,r); g.stroke();
+  g.strokeStyle="#050505"; g.lineWidth=.8;
+  for(let i=1;i<LAT_BANDS.length;i++){
+    const y=by+i*segH;
+    g.beginPath(); g.moveTo(bx+1,y); g.lineTo(bx+barW-1,y); g.stroke();
+  }
+  const latLabels=["90°N","60°N","30°N","0°","30°S","60°S","90°S"];
+  g.font="8px Segoe UI,sans-serif"; g.textAlign="left"; g.textBaseline="middle";
+  latLabels.forEach((lbl,i)=>{
+    const y=by+(i/(latLabels.length-1))*barH;
+    g.strokeStyle="#1e1e1e"; g.lineWidth=.8;
+    g.beginPath(); g.moveTo(bx+barW,y); g.lineTo(bx+barW+4,y); g.stroke();
+    g.fillStyle="#303030"; g.fillText(lbl,bx+barW+6,y);
+  });
+  g.textAlign="right";
+  const abbr={arctic:"ARC",mid_north:"NML",tropics:"TRP",mid_south:"SML",antarctic:"ANT"};
+  LAT_BANDS.forEach((band,i)=>{
+    const on=S.activeBands.has(band.key);
+    const y=by+(i+.5)*segH;
+    g.fillStyle=on?band.color:"#2a2a2a";
+    g.font=on?"bold 8px Segoe UI,sans-serif":"8px Segoe UI,sans-serif";
+    g.fillText(abbr[band.key],bx-4,y);
+  });
+}
+
 function renderBandFilters(){
   const el=document.getElementById("lat-band-list");
   if(!el) return;
   el.innerHTML="";
   LAT_BANDS.forEach(b=>{
-    const row=document.createElement("button");
-    row.type="button";
+    const row=document.createElement("div");
     row.className="band-row"+(S.activeBands.has(b.key)?" on":"");
-    row.textContent=b.label;
+    row.dataset.key=b.key;
+    const top=document.createElement("div");
+    top.className="band-row-top";
+    const dot=document.createElement("div");
+    dot.className="band-dot";
+    dot.style.background=b.color;
+    dot.style.color=b.color;
+    const lbl=document.createElement("span");
+    lbl.className="band-label";
+    lbl.textContent=b.label;
+    const swatch=document.createElement("div");
+    swatch.className="band-line-swatch";
+    swatch.style.color=b.color;
+    top.appendChild(dot); top.appendChild(lbl); top.appendChild(swatch);
+    const range=document.createElement("div");
+    range.className="band-range";
+    range.textContent=b.range;
+    row.appendChild(top); row.appendChild(range);
     row.addEventListener("click",()=>{
       if(S.activeBands.has(b.key)) S.activeBands.delete(b.key);
       else S.activeBands.add(b.key);
       if(S.activeBands.size===0) LAT_BANDS.forEach(x=>S.activeBands.add(x.key));
       renderBandFilters();
+      drawBandGlobe();
       updateMonthsHint();
       render();
     });
     el.appendChild(row);
   });
+  drawBandGlobe();
 }
 
 function projectMiniPoint(lon,lat,centerLon){
@@ -2758,18 +2916,48 @@ function drawMiniGlobe(canvas,centerLon){
   const w=canvas.width,h=canvas.height;
   const cx=w/2,cy=h/2,r=Math.min(w,h)*0.46;
   g.clearRect(0,0,w,h);
-  g.fillStyle="#071325";
+  g.fillStyle="#0a0a0a";
   g.beginPath(); g.arc(cx,cy,r,0,TAU); g.fill();
-  g.strokeStyle="rgba(100,150,230,.45)";
+  g.strokeStyle="rgba(255,255,255,.25)";
   g.lineWidth=1;
   g.beginPath(); g.arc(cx,cy,r,0,TAU); g.stroke();
+
+  // Draw latitude lines
+  g.strokeStyle="rgba(255,255,255,.15)";
+  g.lineWidth=0.6;
+  for(let lat=-60;lat<=60;lat+=30){
+    g.beginPath();
+    for(let lon=-180;lon<=180;lon+=10){
+      const p=projectMiniPoint(lon,lat,centerLon);
+      if(p){
+        const px=cx+p.x*r, py=cy+p.y*r;
+        if(lon===-180) g.moveTo(px,py);
+        else g.lineTo(px,py);
+      }
+    }
+    g.stroke();
+  }
+
+  // Draw longitude lines
+  for(let lon=-180;lon<=180;lon+=30){
+    g.beginPath();
+    for(let lat=-90;lat<=90;lat+=10){
+      const p=projectMiniPoint(lon,lat,centerLon);
+      if(p){
+        const px=cx+p.x*r, py=cy+p.y*r;
+        if(lat===-90) g.moveTo(px,py);
+        else g.lineTo(px,py);
+      }
+    }
+    g.stroke();
+  }
 
   for(const c of visibleCities()){
     const p=projectMiniPoint(c.lon,c.lat,centerLon);
     if(!p) continue;
     g.beginPath();
     g.arc(cx+p.x*r,cy+p.y*r,1.1,0,TAU);
-    g.fillStyle="rgba(70,110,175,.45)";
+    g.fillStyle="rgba(255,255,255,.15)";
     g.fill();
   }
   for(const name of visibleSelectedNames()){
@@ -2789,16 +2977,66 @@ function drawSidebarMiniGlobes(){
 }
 
 // ── VIEW NAV ──────────────────────────────────────────────────────
-function setView(v){
-  v=Math.max(0,Math.min(5,v));
-  // Timeline tab is merged into Pulse (view 2)
-  if(v===3) v = (S.view<=2?4:2);
-  if(v===S.view) return;
+function animateNavTransition(fromView,toView){
+  const nav=document.getElementById("global-tabs");
+  if(!nav) return;
+  const fromIdx=VIEW_NAV_MAP[fromView]??0;
+  const toIdx=VIEW_NAV_MAP[toView]??0;
+  if(fromIdx===toIdx) return;
+  nav.classList.remove("flow-forward","flow-back");
+  void nav.offsetWidth;
+  nav.classList.add(fromIdx<toIdx?"flow-forward":"flow-back");
+  nav.querySelectorAll(".tab-arrow").forEach(el=>{
+    el.classList.remove("active","sliding");
+    const ai=+el.dataset.arrow;
+    const lo=Math.min(fromIdx,toIdx), hi=Math.max(fromIdx,toIdx);
+    if(ai>=lo&&ai<hi){
+      el.classList.add("sliding");
+      if(ai===lo) el.classList.add("active");
+    }
+  });
+  setTimeout(()=>{
+    nav.classList.remove("flow-forward","flow-back");
+    nav.querySelectorAll(".tab-arrow").forEach(el=>el.classList.remove("active","sliding"));
+  },520);
+}
+
+function snapshotPulseGlobe(cx,cy,r){
+  const dpr=window.devicePixelRatio||1;
+  const snap=document.createElement("canvas");
+  const size=Math.ceil(r*2);
+  snap.width=size*dpr; snap.height=size*dpr;
+  snap.style.width=size+"px"; snap.style.height=size+"px";
+  const g=snap.getContext("2d");
+  g.setTransform(dpr,0,0,dpr,0,0);
+  g.drawImage(cv,(cx-r)*dpr,(cy-r)*dpr,size*dpr,size*dpr,0,0,size,size);
+  return snap;
+}
+
+function runPulseMorphTransition(targetView,done){
+  done();
+  return;
+}
+
+function finishSetView(v,prev){
   cv.classList.add("fade");
   S.view=v; hideTT(); S.hover=null;
+  animateNavTransition(prev,v);
   updateOverlays();
   setTimeout(()=>{cv.classList.remove("fade");render();},100);
   syncGlobalTabs();
+}
+
+function setView(v){
+  v=Math.max(0,Math.min(5,v));
+  if(v===S.view) return;
+  const prev=S.view;
+  const morphTargets=new Set([3,4,5]);
+  if(prev===2&&morphTargets.has(v)){
+    runPulseMorphTransition(v,()=>finishSetView(v,prev));
+    return;
+  }
+  finishSetView(v,prev);
 }
 
 function setInitialViewFromQuery(){
@@ -2806,16 +3044,29 @@ function setInitialViewFromQuery(){
   if(view==="globe") S.view = 0;
   if(view==="comparison") S.view = 1;
   if(view==="pulse" || view==="timeline") S.view = 2;
+  if(view==="timeseries") S.view = 3;
   if(view==="scatter") S.view = 4;
   if(view==="quadrant") S.view = 5;
 }
 
 function syncGlobalTabs(){
-  const tab = (S.view===5) ? "quadrant" : (S.view===4 ? "scatter" : (S.view===2 ? "pulse" : "globe"));
+  const tabMap={0:"globe",1:"globe",2:"pulse",3:"timeseries",4:"scatter",5:"quadrant"};
+  const tab=tabMap[S.view]||"globe";
   document.querySelectorAll(".global-tab").forEach(el=>{
     el.classList.toggle("active", el.dataset.tab===tab);
   });
 }
+document.querySelectorAll(".global-tab").forEach(tab=>{
+  tab.addEventListener("click",e=>{
+    const href=tab.getAttribute("href")||"";
+    if(!href.startsWith("?")) return;
+    e.preventDefault();
+    const view=new URLSearchParams(href.slice(1)).get("view");
+    const map={globe:0,pulse:2,timeseries:3,scatter:4,quadrant:5};
+    if(view in map) setView(map[view]);
+    history.replaceState(null,"",href);
+  });
+});
 document.getElementById("np").addEventListener("click",()=>setView(S.view-1));
 document.getElementById("nn").addEventListener("click",()=>setView(S.view+1));
 document.getElementById("gtog").addEventListener("click",()=>{S.flat=!S.flat;render();});
@@ -2831,18 +3082,20 @@ document.getElementById("gtog").addEventListener("click",()=>{S.flat=!S.flat;ren
 });
 window.addEventListener("keydown",e=>{
   if(e.key==="ArrowRight"){
-    const next=S.view===2?4:S.view+1;
-    setView(next);
+    const seq=[0,2,3,4,5];
+    const i=seq.indexOf(S.view);
+    if(i>=0&&i<seq.length-1) setView(seq[i+1]);
   }
   if(e.key==="ArrowLeft"){
-    const prev=S.view===4?2:S.view-1;
-    setView(prev);
+    const seq=[0,2,3,4,5];
+    const i=seq.indexOf(S.view);
+    if(i>0) setView(seq[i-1]);
   }
 });
 
 function buildDots(){
   const el=document.getElementById("dots"); el.innerHTML="";
-  [0,1,2,4,5].forEach(i=>{
+  [0,1,2,3,4,5].forEach(i=>{
     const d=document.createElement("div");
     d.dataset.v=i;
     d.className="dot"+(i===0?" on":""); d.title=VIEWS[i];
@@ -2852,7 +3105,7 @@ function buildDots(){
 function buildVGrid(){
   const el=document.getElementById("vgrid"); if(!el) return; el.innerHTML="";
   VIEWS.forEach((nm,i)=>{
-    if(i===3) return; // Timeline merged into Pulse
+    if(i===1||!nm) return;
     const b=document.createElement("button");
     b.className="vb"+(i===0?" on":""); b.dataset.v=i; b.textContent=nm;
     b.addEventListener("click",()=>setView(i)); el.appendChild(b);
@@ -2863,6 +3116,7 @@ function buildVGrid(){
 DEFAULT_SEL.forEach(n=>addCity(n));
 buildDots(); buildVGrid(); buildMonthRangeInputs();
 renderBandFilters();
+buildCityList();
 updateMonthsHint();
 setupSidebarResize();
 setInitialViewFromQuery();
