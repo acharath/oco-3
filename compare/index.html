@@ -19,17 +19,23 @@ body{display:flex;flex-direction:column}
 .app-shell{display:flex;flex:1;min-height:0}
 
 .global-tabs{
-  height:34px;display:flex;align-items:center;justify-content:center;gap:6px;
+  min-height:34px;display:flex;align-items:center;justify-content:center;gap:6px;
+  flex-wrap:wrap;
   padding:5px 10px;border-bottom:1px solid #121212;background:#050505;flex-shrink:0
 }
 .global-tab{
-  min-width:166px;height:21px;border-radius:4px;border:1px solid #1f1f1f;background:#0d0d0d;
+  min-width:122px;height:auto;border-radius:4px;border:1px solid #1f1f1f;background:#0d0d0d;
+  padding:3px 8px;
   color:#4f4f4f;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:4px;
   text-transform:uppercase;letter-spacing:.07em;font-size:8.5px;font-weight:600;
+  text-align:center;
   transition:border-color .15s,color .15s,background .15s
 }
 .global-tab:hover{border-color:#2b2b2b;color:#b6b6b6}
-.global-tab small{color:#3e3e3e;font-size:8px;font-weight:500;text-transform:none;letter-spacing:.015em}
+.global-tab small{
+  color:#3e3e3e;font-size:8px;font-weight:500;text-transform:none;letter-spacing:.015em;
+  display:block;white-space:normal
+}
 .global-tab.active{border-color:#6d6d6d;background:#0a0a0a;color:#f1f1f1;box-shadow:inset 0 0 0 1px #161616}
 .global-tab.active small{color:#888}
 
@@ -74,7 +80,7 @@ body{display:flex;flex-direction:column}
 .sb-scroll::-webkit-scrollbar{width:3px}
 .sb-scroll::-webkit-scrollbar-thumb{background:#1e1e1e;border-radius:2px}
 .sb-sec{padding:10px 16px 9px;border-bottom:1px solid #0c0c0c}
-.sb-lbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.14em;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.sb-lbl{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.14em;margin-bottom:7px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .sb-lbl-hint{font-size:8px;color:#2a2a2a;text-transform:none;letter-spacing:.04em}
 .chips{display:flex;flex-wrap:wrap;gap:4px;min-height:12px}
 .chip{display:inline-flex;align-items:center;gap:4px;padding:3px 6px 3px 8px;
@@ -139,18 +145,20 @@ body{display:flex;flex-direction:column}
 /* Timeseries panel */
 .ts-panel{position:absolute;inset:0;display:flex;flex-direction:column;padding:16px 20px 14px;background:var(--bg);z-index:2}
 .ts-panel[hidden]{display:none!important}
-.ts-head{display:flex;align-items:center;gap:12px;flex-shrink:0;margin-bottom:12px}
+.ts-head{display:flex;align-items:center;gap:12px;flex-shrink:0;margin-bottom:12px;flex-wrap:wrap}
 .ts-head h2{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.9)}
 .ts-prog-wrap{flex:1;max-width:220px;height:3px;background:#161616;border-radius:2px;overflow:hidden}
 #ts-prog{height:100%;width:0;background:linear-gradient(90deg,#00f5ff,#bf00ff);transition:width .15s linear}
-#ts-status{font-size:10px;color:#444;white-space:nowrap}
-.ts-meta{display:flex;gap:12px;flex-shrink:0;margin-bottom:10px}
-.ts-meta-item{display:flex;align-items:center;gap:5px;font-size:10px;color:#555}
+#ts-status{font-size:10px;color:#444;white-space:normal}
+.ts-meta{display:flex;gap:12px;flex-shrink:0;margin-bottom:10px;flex-wrap:wrap}
+.ts-meta-item{display:flex;align-items:center;gap:5px;font-size:10px;color:#555;min-width:0}
 .ts-meta-dash{width:18px;height:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.8) 0,rgba(255,255,255,.8) 5px,transparent 5px,transparent 9px)}
-.ts-meta-band{width:18px;height:8px;background:rgba(255,255,255,.1);border-radius:1px}
+.ts-meta-band{width:18px;height:8px;background:rgba(220,230,252,0.16);border-radius:1px}
+.ts-meta-solid{width:18px;height:2px;background:rgba(255,255,255,.5);border-radius:1px}
+.ts-meta-white{width:18px;height:2.5px;background:rgba(255,255,255,.82);border-radius:1px}
 .ts-chart-wrap{flex:1;position:relative;min-height:0;padding-bottom:8px}
 #ts-chart{width:100%!important;height:100%!important}
-.ts-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#1e1e1e;font-size:14px;text-align:center;pointer-events:none;line-height:1.6}
+.ts-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#1e1e1e;font-size:14px;text-align:center;pointer-events:none;line-height:1.6;max-width:min(90%,460px)}
 #pulse-morph-layer{position:absolute;inset:0;pointer-events:none;z-index:45;overflow:visible}
 .pulse-morph-globe{position:absolute;border-radius:50%;overflow:hidden;box-shadow:0 0 24px rgba(40,120,255,.4);will-change:transform,width,height,left,top,opacity}
 .mini-globes{display:flex;flex-direction:column;gap:8px;align-items:center}
@@ -170,11 +178,29 @@ body{display:flex;flex-direction:column}
 /* Tooltip */
 #tt{position:absolute;pointer-events:none;z-index:50;display:none;
   background:#0a0a0a;border:1px solid var(--b3);border-radius:6px;
-  padding:8px 12px;font-size:11px;max-width:200px;white-space:nowrap;
+  padding:8px 12px;font-size:11px;max-width:260px;white-space:normal;
   box-shadow:0 4px 20px rgba(0,0,0,.8)}
-.tt-name{font-weight:600;color:#fff;margin-bottom:3px}
+.tt-name{font-weight:600;color:#fff;margin-bottom:6px}
 .tt-row{color:var(--t2);line-height:1.7}
 .tt-row b{color:var(--t1)}
+.tt-circles{display:flex;gap:18px;justify-content:center;margin-bottom:7px;margin-top:2px}
+.tt-circle-wrap{display:flex;flex-direction:column;align-items:center;gap:3px}
+.tt-circle{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,0.25);flex-shrink:0}
+.tt-circle-lbl{font-size:8.5px;color:#888;text-transform:uppercase;letter-spacing:.07em}
+.tt-circle-val{font-size:9px;color:#ccc;white-space:nowrap}
+.tt-divider{border:none;border-top:1px solid #1e1e1e;margin:5px 0}
+/* ── City Groups ── */
+.grp-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px}
+.grp-btn{font-size:9.5px;padding:5px 7px;background:#0a0a0a;border:1px solid #1e1e1e;
+  color:#555;border-radius:4px;cursor:pointer;text-align:left;font-family:inherit;
+  transition:border-color .15s,color .15s,background .15s;line-height:1.35;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grp-btn:hover{border-color:#2a2a2a;color:#999;background:#111}
+.grp-btn.active{border-color:rgba(0,245,255,0.35);color:#00f5ff;background:#061214}
+.grp-btn .grp-icon{margin-right:3px;font-size:9px}
+.grp-clear{margin-top:5px;font-size:9px;color:#333;cursor:pointer;text-align:center;
+  padding:3px;border:1px solid transparent;border-radius:3px;transition:color .15s,border-color .15s}
+.grp-clear:hover{color:#666;border-color:#222}
 
 /* Nav arrows */
 .nav{position:absolute;top:50%;transform:translateY(-50%);
@@ -193,10 +219,10 @@ body{display:flex;flex-direction:column}
 
 /* View header bar */
 #vhdr{position:absolute;top:10px;left:50%;transform:translateX(-50%);
-  z-index:10;pointer-events:none;text-align:center}
+  z-index:10;pointer-events:none;text-align:center;max-width:min(78vw,760px);padding:0 10px}
 #vhdr h2{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(255,255,255,.9)}
-#vhdr p{font-size:9px;color:var(--t3);margin-top:2px;letter-spacing:.05em}
+  color:rgba(255,255,255,.9);line-height:1.3;white-space:normal;word-break:break-word}
+#vhdr p{font-size:9px;color:var(--t3);margin-top:2px;letter-spacing:.05em;line-height:1.35;white-space:normal;word-break:break-word}
 
 /* Globe toggle */
 #gtog{position:absolute;top:10px;right:11px;z-index:10;font-size:10px;padding:4px 9px;
@@ -209,7 +235,7 @@ body{display:flex;flex-direction:column}
 #scat-ctrl{position:absolute;top:10px;left:50%;transform:translateX(-50%);
   z-index:10;display:none;align-items:center;gap:8px;
   background:rgba(8,8,8,.9);border:1px solid #1e1e1e;border-radius:5px;
-  padding:5px 12px;white-space:nowrap}
+  padding:5px 12px;white-space:normal;max-width:calc(100% - 22px);flex-wrap:wrap;justify-content:center}
 #scat-ctrl.on{display:flex}
 .sc-lbl{font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.1em}
 .sc-sep{color:#252525;font-size:12px}
@@ -217,6 +243,20 @@ body{display:flex;flex-direction:column}
   font-size:10px;border-radius:3px;outline:none;cursor:pointer;font-family:inherit;
   max-width:160px}
 .sc-col-block{display:inline-flex;align-items:center;gap:8px}
+
+@media (max-width: 1180px){
+  .tab-arrow{display:none}
+  .global-tab{min-width:110px}
+}
+@media (max-width: 900px){
+  .global-tabs{justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap}
+  .global-tab{flex:0 0 auto}
+  .ts-panel{padding:12px 12px 10px}
+  .ts-head{gap:8px}
+  #scat-ctrl{top:8px;padding:5px 8px;gap:6px}
+  .sc-sel{max-width:130px}
+  #vhdr{top:8px}
+}
 
 /* Loading */
 #ldg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
@@ -230,7 +270,7 @@ body{display:flex;flex-direction:column}
 <nav class="global-tabs" id="global-tabs" aria-label="Visualization switcher">
   <a class="global-tab" data-tab="globe" data-nav-idx="0" href="?view=globe">Globe <small>Spatial Comparison</small></a>
   <span class="tab-arrow" data-arrow="0" aria-hidden="true">→</span>
-  <a class="global-tab" data-tab="pulse" data-nav-idx="1" href="?view=pulse">Pulse <small>Temporal Exploration</small></a>
+  <a class="global-tab" data-tab="pulse" data-nav-idx="1" href="?view=pulse">Timeline <small>Temporal Exploration</small></a>
   <span class="tab-arrow" data-arrow="1" aria-hidden="true">→</span>
   <a class="global-tab" data-tab="timeseries" data-nav-idx="2" href="?view=timeseries">Timeseries <small>City Trends</small></a>
   <span class="tab-arrow" data-arrow="2" aria-hidden="true">→</span>
@@ -256,6 +296,11 @@ body{display:flex;flex-direction:column}
         <input class="sb-inp" id="srch" type="text" placeholder="Add city&#x2026;" autocomplete="off">
         <div class="ac" id="city-ac"></div>
       </div>
+    </div>
+    <div class="sb-sec" id="city-groups-sec">
+      <div class="sb-lbl">City Groups <span class="sb-lbl-hint">click to load preset</span></div>
+      <div class="grp-grid" id="grp-grid"></div>
+      <div class="grp-clear" id="grp-clear" style="display:none">✕ clear group</div>
     </div>
     <div class="sb-sec">
       <div class="sb-lbl">Time Range</div>
@@ -296,20 +341,22 @@ body{display:flex;flex-direction:column}
   <div id="pulse-morph-layer" aria-hidden="true"></div>
   <div id="ts-panel" class="ts-panel" hidden>
     <div class="ts-head">
-      <h2>CO₂ City Timeseries</h2>
+      <h2>CO₂ &amp; SIF City Timeseries</h2>
       <div class="ts-prog-wrap"><div id="ts-prog"></div></div>
       <span id="ts-status">Loading data…</span>
     </div>
     <div class="ts-meta">
-      <div class="ts-meta-item"><div class="ts-meta-dash"></div><span>Avg of selected cities</span></div>
-      <div class="ts-meta-item"><div class="ts-meta-band"></div><span>±1 std dev</span></div>
+      <div class="ts-meta-item"><div class="ts-meta-solid"></div><span>Per city</span></div>
+      <div class="ts-meta-item"><div class="ts-meta-white"></div><span>Group average</span></div>
+      <div class="ts-meta-item"><div class="ts-meta-band"></div><span>&#xb1;1&#x3c3; band</span></div>
+      <div class="ts-meta-item" style="color:#333;font-size:9.5px">Click a line to bold it</div>
     </div>
     <div class="ts-chart-wrap">
       <p class="ts-hint" id="ts-hint">Select cities in the sidebar<br>or toggle latitude bands</p>
       <canvas id="ts-chart"></canvas>
     </div>
   </div>
-<div id="ldg"><div class="ldg-sp"></div><span>Loading world map&#x2026;</span></div>
+<div id="ldg" style="display:none"><div class="ldg-sp"></div><span>Loading world map&#x2026;</span></div>
   <div id="tt">
     <div class="tt-name" id="tt-name"></div>
     <div id="tt-body"></div>
@@ -468,11 +515,9 @@ const ALL_MONTHS = (()=>{
 const MIN_MONTH = ALL_MONTHS[0];
 const MAX_MONTH = ALL_MONTHS[ALL_MONTHS.length-1];
 const LAT_BANDS = [
-  {key:'arctic',label:'Arctic',range:'60°N – 90°N',latMin:60,latMax:90,color:'#93d5f7'},
   {key:'mid_north',label:'N. Mid-latitudes',range:'30°N – 60°N',latMin:30,latMax:60,color:'#5b8ff9'},
   {key:'tropics',label:'Tropics',range:'30°S – 30°N',latMin:-30,latMax:30,color:'#ffc444'},
   {key:'mid_south',label:'S. Mid-latitudes',range:'30°S – 60°S',latMin:-60,latMax:-30,color:'#29d8a8'},
-  {key:'antarctic',label:'Antarctic',range:'60°S – 90°S',latMin:-90,latMax:-60,color:'#be8fff'}
 ];
 const VIEW_NAV_MAP={0:0,1:0,2:1,3:2,4:3,5:4};
 const CITY_BY_NAME = new Map(CITY_DATA.map(c=>[c.name,c]));
@@ -508,8 +553,8 @@ function scatVal(c,key,months){
 }
 
 function scatCities(){
-  const all=visibleCities();
-  return S.sel.length ? all.filter(c=>S.sel.includes(c.name)) : all;
+  // Always show all visible cities; selected ones are drawn highlighted on top.
+  return visibleCities();
 }
 
 // ── APP STATE ─────────────────────────────────────────────────────
@@ -527,9 +572,10 @@ let S = {
   hover:  null,
   month:  null,
   pulseRot: null,
-  v2mode: 'pulse',
+  v2mode: 'timeline',
   v2timelineMetric: 'raw',
   drag:   {on:false},
+  group:  null,
   scat:   {x:'xco2avg', y:'sif', sz:'pop', col:'xco2avg'},
   _pulseGeom: null,
   _v2tog:     null,
@@ -540,6 +586,123 @@ let S = {
 
 // ── DEFAULT SELECTED CITIES ───────────────────────────────────────
 const DEFAULT_SEL = ['Los Angeles','London','Beijing','Tokyo','Mumbai','Lagos'];
+
+// ── CITY GROUPS (preset selections) ──────────────────────────────
+const CITY_GROUPS = [
+  {
+    id: 'olympic',
+    label: 'Olympic Cities',
+    icon: '🏅',
+    desc: 'Modern-era Summer & Winter Olympic host cities',
+    cities: [
+      'Athens','Paris','Los Angeles','London','Melbourne','Rome',
+      'Tokyo','Mexico City','Munich','Montreal','Seoul','Barcelona',
+      'Atlanta','Sydney','Beijing','Rio de Janeiro','Calgary',
+      'Salt Lake City','Vancouver'
+    ]
+  },
+  {
+    id: 'megacities',
+    label: 'Megacities',
+    icon: '🌆',
+    desc: 'Cities with metro population > 10 million',
+    cities: [
+      'Tokyo','Shanghai','Mumbai','Beijing','New Delhi','Sao Paulo',
+      'Mexico City','Cairo','Dhaka','Osaka','Karachi','Chongqing',
+      'Istanbul','Kinshasa','Lagos','Manila','Tianjin','Guangzhou',
+      'Lahore','Bengaluru','Buenos Aires','Kolkata'
+    ]
+  },
+  {
+    id: 'tech',
+    label: 'Tech Hubs',
+    icon: '💻',
+    desc: 'Leading global technology and innovation centers',
+    cities: [
+      'San Francisco','San Jose','Seattle','Austin','Boston','New York',
+      'London','Bengaluru','Tel Aviv-Yafo','Seoul','Tokyo','Taipei',
+      'Singapore','Beijing','Amsterdam'
+    ]
+  },
+  {
+    id: 'finance',
+    label: 'Finance Centers',
+    icon: '💰',
+    desc: 'Major global financial hubs',
+    cities: [
+      'New York','London','Tokyo','Hong Kong','Singapore','Zurich',
+      'Paris','Dubai','Chicago','Toronto','Seoul','Sydney','Shanghai',
+      'Taipei','Mumbai'
+    ]
+  },
+  {
+    id: 'desert',
+    label: 'Desert Cities',
+    icon: '🏜️',
+    desc: 'Cities in arid or desert climates',
+    cities: [
+      'Dubai','Abu Dhabi','Riyadh','Doha','Cairo','Las Vegas','Phoenix',
+      'Palm Springs','Jeddah','Makkah','Medina','Isfahan','Tehran',
+      'Mashhad','Karachi','Ashgabat','Tucson'
+    ]
+  },
+  {
+    id: 'coastal',
+    label: 'Coastal Ports',
+    icon: '🌊',
+    desc: 'Major port cities and coastal megacities',
+    cities: [
+      'Singapore','Hong Kong','Shanghai','Dubai','New York','Los Angeles',
+      'Sydney','London','Mumbai','Kaohsiung','Busan','Jakarta',
+      'Manila','Cape Town','Lagos','Rio de Janeiro','Barcelona','Miami'
+    ]
+  },
+  {
+    id: 'altitude',
+    label: 'High Altitude',
+    icon: '⛰️',
+    desc: 'Cities above 1 500 m elevation',
+    cities: [
+      'La Paz','Oruro','Uyuni','Quito','Bogota','Addis Ababa',
+      'Mexico City','Johannesburg','Nairobi','Denver','Salt Lake City',
+      'Tehran','Springs'
+    ]
+  },
+  {
+    id: 'industrial',
+    label: 'Industrial Belt',
+    icon: '🏭',
+    desc: 'Major heavy-industry and manufacturing cities',
+    cities: [
+      'Chicago','Houston','Pittsburgh','Wuhan','Shenyang','Taiyuan',
+      'Zhengzhou','Datong','Baotou','Jinan','Ostrava','Katowice',
+      'Birmingham','Kolkata','Dalian','Tianjin','Chongqing'
+    ]
+  },
+  {
+    id: 'brics',
+    label: 'BRICS Nations',
+    icon: '🌐',
+    desc: 'Top cities from Brazil, Russia, India, China, South Africa',
+    cities: [
+      'Sao Paulo','Rio de Janeiro','Manaus','Curitiba','Salvador',
+      'St. Petersburg','Mumbai','New Delhi','Bengaluru','Kolkata','Chennai',
+      'Hyderabad','Beijing','Shanghai','Guangzhou','Chengdu','Wuhan',
+      'Johannesburg','Cape Town','Durban'
+    ]
+  },
+  {
+    id: 'euro_caps',
+    label: 'European Capitals',
+    icon: '🏰',
+    desc: 'Capital cities across Europe',
+    cities: [
+      'London','Paris','Rome','Madrid','Amsterdam','Brussels','Vienna',
+      'Warsaw','Prague','Budapest','Bucharest','Athens','Lisbon',
+      'Oslo','Stockholm','Dublin'
+    ]
+  }
+];
 
 
 // ── TIME HELPERS ──────────────────────────────────────────────────
@@ -1023,7 +1186,7 @@ function sifDiffColorSigned(t){
 }
 
 function drawDots(proj,opts={}){
-  const{selR=6,dimR=1.5,labels=true,sizeByXco2=false}=opts;
+  const{selR=6,dimR=1.5,labels=true,sizeByXco2=false,drawSelected=true}=opts;
   const mo=S.month; // null = avg, "YYYY-MM" = specific month
   // For sizing selected cities: use deviation from global mean for that month, or avg deviation
   const selXco2s=visibleSelectedNames().map(n=>{
@@ -1058,6 +1221,7 @@ function drawDots(proj,opts={}){
     }
   }
   // Selected cities on top
+  if(!drawSelected) return;
   for(const name of visibleSelectedNames()){
     const c=CITY_BY_NAME.get(name); if(!c) continue;
     if(!S.flat && !isFrontHemisphere(proj,c.lon,c.lat)) continue;
@@ -1201,20 +1365,105 @@ function scrubToX(ex){
 function drawV0(){
   ctx.clearRect(0,0,W,H);
   const sc=Math.min(W,H)*.4;
+  const selPts=[];
+  let proj=null;
   if(!S.flat){
-    const proj=mkGlobe(W/2,H/2,sc);
+    proj=mkGlobe(W/2,H/2,sc);
     drawGlobe(proj,{stars:false});
-    drawDots(proj,{selR:7});
+    drawDots(proj,{selR:7,labels:false,drawSelected:false});
   } else {
-    const proj=mkFlat(W/2,H/2,W/6.6);
+    proj=mkFlat(W/2,H/2,W/6.6);
     drawFlatMap(proj);
-    drawDots(proj,{selR:7});
+    drawDots(proj,{selR:7,labels:false,drawSelected:false});
   }
+
+  const focusNames=[...visibleSelectedNames()];
+  for(const name of focusNames){
+    const c=CITY_BY_NAME.get(name); if(!c||!proj) continue;
+    if(!S.flat&&!isFrontHemisphere(proj,c.lon,c.lat)) continue;
+    const p=proj([c.lon,c.lat]); if(!p) continue;
+    const stats=cityStats(name);
+    const months=stats?.months||filtMo(name);
+    const co2=stats?.avg;
+    const sif=getSIF(name,months);
+    selPts.push({name,c,p,co2,sif,col:S.colors[name]||"#97cfff"});
+  }
+
+  const co2Vals=selPts.map(d=>d.co2).filter(v=>v!=null&&isFinite(v));
+  const sifVals=selPts.map(d=>d.sif).filter(v=>v!=null&&isFinite(v));
+  const co2Min=co2Vals.length?Math.min(...co2Vals):410;
+  const co2Max=co2Vals.length?Math.max(...co2Vals):430;
+  const co2Rng=Math.max(0.8,co2Max-co2Min);
+  const sifMax=Math.max(0.45,sifVals.length?Math.max(...sifVals):0.45);
+
+  for(const d of selPts){
+    const x=d.p[0], y=d.p[1];
+    const isHov=S.hover?.name===d.c.name;
+    const co2t=d.co2==null?0:Math.max(0,Math.min(1,(d.co2-co2Min)/co2Rng));
+    const sift=d.sif==null?0:Math.max(0,Math.min(1,d.sif/sifMax));
+    const mag=(co2t+sift)/2;
+    const r=(isHov?9.5:7)+mag*6;
+
+    const halo=ctx.createRadialGradient(x,y,0,x,y,r*2.2);
+    halo.addColorStop(0,ha(d.col,.18+.22*mag));
+    halo.addColorStop(1,ha(d.col,0));
+    ctx.beginPath(); ctx.arc(x,y,r*2.2,0,TAU); ctx.fillStyle=halo; ctx.fill();
+
+    const fillAlpha=.35+.65*mag;
+    ctx.save();
+    ctx.globalAlpha=fillAlpha;
+    ctx.beginPath(); ctx.arc(x,y,r,0,TAU);
+    ctx.fillStyle=d.col; ctx.fill();
+    ctx.restore();
+
+    ctx.font="bold 10.5px Segoe UI,sans-serif";
+    ctx.fillStyle=d.col; ctx.textAlign="left"; ctx.textBaseline="middle";
+    ctx.fillText(d.name,x+r+4,y);
+
+  }
+  // ── Bottom-left color key ─────────────────────────────────────────
   ctx.save();
-  ctx.fillStyle="rgba(5,5,5,.8)"; ctx.fillRect(12,12,224,18);
-  ctx.fillStyle="#666"; ctx.font="9px Segoe UI,sans-serif";
-  ctx.textBaseline="middle"; ctx.textAlign="left";
-  ctx.fillText(visibleCities().length+" cities \u00b7 OCO-3 SAM \u00b7 click to select",18,22);
+  const kx=12, ky=H-130, kw=170, barH=9, barW=kw-8;
+  ctx.fillStyle="rgba(4,4,6,.82)";
+  ctx.strokeStyle="#1a1a1a"; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.roundRect(kx,ky,kw,118,4); ctx.fill(); ctx.stroke();
+
+  ctx.font="bold 7.5px Segoe UI,sans-serif";
+  ctx.textAlign="left"; ctx.textBaseline="top";
+  ctx.fillStyle="#888";
+  ctx.fillText("COLOR KEY",kx+6,ky+7);
+
+  // CO₂ ramp
+  ctx.fillStyle="#666"; ctx.font="7.5px Segoe UI,sans-serif";
+  ctx.fillText("XCO\u2082 (ppm) — relative to selection",kx+6,ky+22);
+  for(let i=0;i<barW;i++){
+    ctx.fillStyle=co2Color01(i/barW);
+    ctx.fillRect(kx+4+i,ky+33,1,barH);
+  }
+  ctx.strokeStyle="#333"; ctx.lineWidth=.5; ctx.strokeRect(kx+4,ky+33,barW,barH);
+  ctx.fillStyle="#555"; ctx.font="7px Segoe UI,sans-serif";
+  ctx.textAlign="left";  ctx.textBaseline="top"; ctx.fillText("low",kx+4,ky+44);
+  ctx.textAlign="right"; ctx.fillText("high",kx+4+barW,ky+44);
+
+  // SIF ramp
+  ctx.fillStyle="#666"; ctx.font="7.5px Segoe UI,sans-serif";
+  ctx.textAlign="left"; ctx.textBaseline="top";
+  ctx.fillText("SIF (W/m\u00b2/sr/nm)",kx+6,ky+60);
+  for(let i=0;i<barW;i++){
+    ctx.fillStyle=sifColor(i/barW*0.45);
+    ctx.fillRect(kx+4+i,ky+71,1,barH);
+  }
+  ctx.strokeStyle="#333"; ctx.lineWidth=.5; ctx.strokeRect(kx+4,ky+71,barW,barH);
+  ctx.fillStyle="#555"; ctx.font="7px Segoe UI,sans-serif";
+  ctx.textAlign="left";  ctx.textBaseline="top"; ctx.fillText("0",kx+4,ky+82);
+  ctx.textAlign="right"; ctx.fillText("0.45+",kx+4+barW,ky+82);
+
+  // Note
+  ctx.fillStyle="#333"; ctx.font="7px Segoe UI,sans-serif";
+  ctx.textAlign="left";
+  ctx.fillText("Circle size \u2192 combined magnitude",kx+6,ky+98);
+  ctx.fillText("Hover selected city to see values",kx+6,ky+108);
+
   ctx.restore();
   drawScrubber();
 }
@@ -1322,10 +1571,16 @@ function drawV2(){
     if(p1){ctx.beginPath();ctx.arc(p1[0],p1[1],1.25,0,TAU);ctx.fillStyle="rgba(35,65,125,0.24)";ctx.fill();}
     if(p2){ctx.beginPath();ctx.arc(p2[0],p2[1],1.25,0,TAU);ctx.fillStyle="rgba(35,65,125,0.24)";ctx.fill();}
   }
-  ctx.fillStyle="rgba(165,190,235,0.72)";
-  ctx.font="8px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="bottom";
-  ctx.fillText("FRONT",gCX,gCY1-gR-6);
-  ctx.fillText("BACK",gCX,gCY2-gR-6);
+  // Globe labels: which hemisphere is visible
+  ctx.font="bold 8px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="bottom";
+  ctx.fillStyle="rgba(165,190,235,0.85)";
+  ctx.fillText("Primary View",gCX,gCY1-gR-8);
+  ctx.fillStyle="rgba(120,145,190,0.65)";
+  ctx.fillText("Opposite Side",gCX,gCY2-gR-8);
+  // Drag hint beneath lower globe
+  ctx.font="7.5px Segoe UI,sans-serif"; ctx.textBaseline="top";
+  ctx.fillStyle="rgba(90,110,150,0.5)";
+  ctx.fillText("drag to rotate",gCX,gCY2+gR+7);
 
   const spX0=W*.41, spX1=W*.94, spW=spX1-spX0;
   S._v2tlTog=null;
@@ -1336,7 +1591,7 @@ function drawV2(){
   ctx.fillStyle="rgba(7,9,13,.92)";
   ctx.strokeStyle="#1f2839"; ctx.lineWidth=1;
   ctx.beginPath(); ctx.roundRect(tX,tY,tW,tH,4); ctx.fill(); ctx.stroke();
-  const leftOn=S.v2mode==='pulse';
+  const leftOn=S.v2mode==='timeline';
   ctx.fillStyle=leftOn?"rgba(0,245,255,.13)":"rgba(0,0,0,0)";
   ctx.beginPath(); ctx.roundRect(tX+2,tY+2,tW/2-3,tH-4,3); ctx.fill();
   ctx.fillStyle=!leftOn?"rgba(0,245,255,.13)":"rgba(0,0,0,0)";
@@ -1379,9 +1634,9 @@ function drawV2(){
     ctx.beginPath(); ctx.roundRect(t2X+t2W/2+1,t2Y+2,t2W/2-3,t2H-4,3); ctx.fill();
     ctx.fillStyle=rawOn?"#9ffcff":"#6f7f97"; ctx.font="8.5px Segoe UI,sans-serif";
     ctx.textAlign="center"; ctx.textBaseline="middle";
-    ctx.fillText("City Values",t2X+t2W*.25,t2Y+t2H/2);
+    ctx.fillText("CO\u2082 & SIF",t2X+t2W*.25,t2Y+t2H/2);
     ctx.fillStyle=!rawOn?"#9ffcff":"#6f7f97";
-    ctx.fillText("Diff vs Mean",t2X+t2W*.75,t2Y+t2H/2);
+    ctx.fillText("Diff from Mean",t2X+t2W*.75,t2Y+t2H/2);
 
     // Monthly means across selected cities
     const meanCo2={},meanSif={};
@@ -1476,11 +1731,25 @@ function drawV2(){
       if(cpF){ctx.beginPath();ctx.arc(cpF[0],cpF[1],4.2,0,TAU);ctx.fillStyle=col;ctx.fill();}
       if(cpB){ctx.beginPath();ctx.arc(cpB[0],cpB[1],4.2,0,TAU);ctx.fillStyle=col;ctx.fill();}
       const mo=CO2_MONTHLY[name]||{};
-      ctx.font="bold 11px Segoe UI,sans-serif"; ctx.fillStyle=col;
+      // City label — size and detail conditional on row height
       ctx.textAlign="right"; ctx.textBaseline="middle";
-      ctx.fillText(name.length>15?name.slice(0,14)+"…":name,spX0+labW-9,rowY);
-      ctx.font="8px Segoe UI,sans-serif"; ctx.fillStyle="#999";
-      ctx.fillText(c.country.split(" ").pop(),spX0+labW-9,rowY+12);
+      if(rowH2>=26){
+        // Full: name + country on separate lines
+        ctx.font="bold 10px Segoe UI,sans-serif"; ctx.fillStyle=col;
+        ctx.fillText(name.length>15?name.slice(0,14)+"\u2026":name,spX0+labW-9,rowY-6);
+        ctx.font="7.5px Segoe UI,sans-serif"; ctx.fillStyle="#888";
+        ctx.fillText(c.country.split(" ").pop(),spX0+labW-9,rowY+6);
+      } else if(rowH2>=16){
+        // Compact: name only, slightly smaller
+        ctx.font="bold 8.5px Segoe UI,sans-serif"; ctx.fillStyle=col;
+        const dispName=name.length>13?name.slice(0,12)+"\u2026":name;
+        ctx.fillText(dispName,spX0+labW-9,rowY);
+      } else {
+        // Very tight: tiny abbreviated name
+        ctx.font="7px Segoe UI,sans-serif"; ctx.fillStyle=col;
+        const dispName=name.length>10?name.slice(0,9)+"\u2026":name;
+        ctx.fillText(dispName,spX0+labW-9,rowY);
+      }
 
       // Row backgrounds for the two stacked bands
       ctx.fillStyle="rgba(18,18,18,.42)";
@@ -1547,22 +1816,24 @@ function drawV2(){
         }
       });
 
-      // Labels "CO2" and "SIF" at left of each band's row
-      ctx.font="6.5px Segoe UI,sans-serif"; ctx.fillStyle="rgba(140,150,170,.75)";
-      ctx.textAlign="right"; ctx.textBaseline="middle";
-      ctx.fillText("CO2",startX-6,yCO2+bandH/2);
-      ctx.fillText("SIF",startX-6,ySIF+bandH/2);
+      // Labels "CO2" and "SIF" — only when bands are tall enough to read
+      if(bandH>=7){
+        ctx.font="6.5px Segoe UI,sans-serif"; ctx.fillStyle="rgba(140,150,170,.72)";
+        ctx.textAlign="right"; ctx.textBaseline="middle";
+        ctx.fillText("CO\u2082",startX-6,yCO2+bandH/2);
+        ctx.fillText("SIF",startX-6,ySIF+bandH/2);
+      }
     });
     ctx.fillStyle="#111"; ctx.fillRect(spX0+labW,H-legH,W-(spX0+labW),legH);
     ctx.fillStyle="#999"; ctx.font="8px Segoe UI,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="top";
     const lg=S.v2timelineMetric==='raw'
-      ?"TOP = CO2 (white→red, per-city) | BOTTOM = SIF (white→green, per-city)"
-      :"TOP = CO2 - mean (blue→white→red) | BOTTOM = SIF - mean (purple→white→green)";
+      ?"CO₂ upper band: white = low, red = high  ·  SIF lower band: white = low, green = high  ·  scaled per city"
+      :"CO₂ anomaly: blue = below group avg, red = above  ·  SIF anomaly: purple = below avg, green = above";
     ctx.fillText(lg,spX0+labW+12,H-legH+16);
     ctx.restore();
     return;
   }
-  const topPad=42, botPad=34;
+  const topPad=54, botPad=38;
   const plotTop=topPad, plotBot=H-botPad;
   const rowH=(plotBot-plotTop)/Math.max(1,n);
 
@@ -1594,23 +1865,31 @@ function drawV2(){
     ctx.fillStyle="rgba(0,0,0,.88)";
     ctx.fillRect(x-1,plotTop-6,Math.max(2,xSc*.94),plotBot-plotTop+12);
   });
-  // Axis titles (x-axis unchanged as requested)
-  ctx.fillStyle="#9aaacd"; ctx.font="8.5px Segoe UI,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
-  ctx.fillText("XCO2 time series (per-city y-scale)",spX0,plotTop-20);
+  // Chart header: title + legend note
+  ctx.fillStyle="#bbc8e0"; ctx.font="bold 10px Segoe UI,sans-serif"; ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+  ctx.fillText("CO\u2082 Concentration Over Time",spX0,plotTop-22);
+  ctx.fillStyle="rgba(110,130,170,0.7)"; ctx.font="7.5px Segoe UI,sans-serif";
+  ctx.fillText("Each row shows one city \u00b7 Y-axis scaled per city \u00b7 dot marks most recent reading",spX0,plotTop-10);
+  // Y-axis label (rotated)
   ctx.save();
-  ctx.translate(spX0-40,(plotTop+plotBot)/2);
+  ctx.translate(spX0-36,(plotTop+plotBot)/2);
   ctx.rotate(-Math.PI/2);
-  ctx.fillStyle="#9aaacd"; ctx.font="8.5px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
-  ctx.fillText("Y axis: XCO2 (ppm, per row)",0,0);
+  ctx.fillStyle="rgba(130,150,190,0.6)"; ctx.font="7.5px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+  ctx.fillText("CO\u2082 (ppm)",0,0);
   ctx.restore();
-  ctx.fillStyle="#9aaacd"; ctx.font="8.5px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="top";
-  ctx.fillText("X axis: Time (YYYY-MM)",spX0+spW*.46,plotBot+30);
+  // X-axis label
+  ctx.fillStyle="rgba(110,130,170,0.55)"; ctx.font="7.5px Segoe UI,sans-serif"; ctx.textAlign="center"; ctx.textBaseline="top";
+  ctx.fillText("Time \u2192",spX0+spW*.46,plotBot+30);
   ctx.restore();
 
   selNames.forEach((name,i)=>{
     const c=CITY_BY_NAME.get(name); if(!c) return;
     const col=S.colors[name];
     const rowY=plotTop+rowH*(i+.5);
+    // Clip each row to its vertical allocation so labels never bleed into adjacent rows
+    ctx.save();
+    const clipTop=plotTop+rowH*i, clipBot=plotTop+rowH*(i+1);
+    ctx.beginPath(); ctx.rect(0,clipTop,W,clipBot-clipTop); ctx.clip();
     const cpF=isFrontHemisphere(projF,c.lon,c.lat)?projF([c.lon,c.lat]):null;
     const cpB=isFrontHemisphere(projB,c.lon,c.lat)?projB([c.lon,c.lat]):null;
     const cp=cpF||cpB;
@@ -1627,22 +1906,43 @@ function drawV2(){
     if(cpF){ctx.beginPath();ctx.arc(cpF[0],cpF[1],4.5,0,TAU);ctx.fillStyle=col;ctx.fill();}
     if(cpB){ctx.beginPath();ctx.arc(cpB[0],cpB[1],4.5,0,TAU);ctx.fillStyle=col;ctx.fill();}
 
-    const spH=Math.min(rowH*.68,36);
+    const spH=Math.min(rowH*.72,48);
     const yTop=rowY-spH/2, yBot=rowY+spH/2;
-    ctx.fillStyle="rgba(9,13,22,.28)";
+    // Row background
+    ctx.fillStyle="rgba(9,13,22,.30)";
     ctx.fillRect(spX0-2,yTop-1,spW*.92+4,spH+2);
     ctx.strokeStyle=ha(col,.14); ctx.lineWidth=.6;
     ctx.strokeRect(spX0-2,yTop-1,spW*.92+4,spH+2);
+
+    const mo=CO2_MONTHLY[name]||{};
+
+    // ── Magnitude bars (behind line, same scale) ──────────────────
+    const bW=Math.max(1,xSc*0.88);
+    allMo.forEach((m,j)=>{
+      const v=mo[m]; if(v==null) return;
+      const t=(v-rMin)/Math.max(rMax-rMin,0.1);
+      const bH=Math.max(1,t*spH);
+      const bX=xOf(j)-bW/2;
+      const bY=yBot-bH;
+      ctx.fillStyle=co2Color01(t);
+      ctx.globalAlpha=0.55;
+      ctx.fillRect(bX,bY,bW,bH);
+      ctx.globalAlpha=1;
+    });
+
+    // Mid-level guide line (city average)
     const yMid=yBot-(rMid-rMin)/(rMax-rMin)*spH;
     ctx.beginPath(); ctx.moveTo(spX0,yMid); ctx.lineTo(spX0+spW*.92,yMid);
-    ctx.strokeStyle="rgba(95,120,165,.2)"; ctx.lineWidth=.55; ctx.stroke();
+    ctx.strokeStyle="rgba(95,120,165,.25)"; ctx.lineWidth=.6; ctx.setLineDash([3,3]); ctx.stroke();
+    ctx.setLineDash([]);
+
     // Per-row y labels
     ctx.fillStyle=ha(col,.78); ctx.font="7.5px Segoe UI,sans-serif"; ctx.textAlign="right"; ctx.textBaseline="middle";
     ctx.fillText(rMax.toFixed(1)+" ppm",spX0-12,yTop+1);
     ctx.fillText(rMid.toFixed(1)+" ppm",spX0-12,yMid);
     ctx.fillText(rMin.toFixed(1)+" ppm",spX0-12,yBot-1);
 
-    const mo=CO2_MONTHLY[name]||{};
+    // ── CO₂ line on top of bars ───────────────────────────────────
     let started=false;
     ctx.beginPath();
     allMo.forEach((m,j)=>{
@@ -1651,23 +1951,37 @@ function drawV2(){
       const sy=yBot-(v-rMin)/(rMax-rMin)*spH;
       if(!started){ctx.moveTo(sx,sy);started=true;}else{ctx.lineTo(sx,sy);}
     });
-    ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.stroke();
+    ctx.strokeStyle="rgba(255,255,255,0.82)"; ctx.lineWidth=1.8; ctx.stroke();
 
     const lastMo=cMo[cMo.length-1];
     const lastJ=allMo.indexOf(lastMo);
     if(lastJ>=0&&mo[lastMo]!==undefined){
       const lSx=xOf(lastJ);
       const lSy=yBot-(mo[lastMo]-rMin)/(rMax-rMin)*spH;
-      ctx.beginPath(); ctx.arc(lSx,lSy,4,0,TAU); ctx.fillStyle=col; ctx.fill();
+      ctx.beginPath(); ctx.arc(lSx,lSy,4,0,TAU); ctx.fillStyle="rgba(255,255,255,0.9)"; ctx.fill();
     }
 
-    ctx.font="bold 11px Segoe UI,sans-serif"; ctx.fillStyle=col;
-    ctx.textAlign="left"; ctx.textBaseline="bottom";
-    ctx.fillText(name,spX0,yTop-8);
-    ctx.font="8px Segoe UI,sans-serif"; ctx.fillStyle=ha(col,.7);
     const curr=mo[lastMo];
-    const currTxt=curr!=null?curr.toFixed(2)+" ppm":"no point";
-    ctx.fillText("latest: "+currTxt+" · avg "+stats.avg.toFixed(2)+" ppm · "+cMo.length+" months",spX0,yTop-19);
+    const currTxt=curr!=null?curr.toFixed(1)+" ppm":"—";
+    const aboveGap=rowH-spH; // px between chart zones of adjacent rows
+    ctx.textAlign="left";
+    if(aboveGap>=30){
+      // Plenty of room — name + stats above the chart
+      ctx.font="bold 10px Segoe UI,sans-serif"; ctx.fillStyle=col; ctx.textBaseline="bottom";
+      ctx.fillText(name,spX0,yTop-5);
+      ctx.font="7px Segoe UI,sans-serif"; ctx.fillStyle=ha(col,.62); ctx.textBaseline="bottom";
+      ctx.fillText("Avg: "+stats.avg.toFixed(1)+" ppm \u00b7 Latest: "+currTxt+" \u00b7 "+cMo.length+" months",spX0,yTop-16);
+    } else if(aboveGap>=14){
+      // Moderate space — name only above chart
+      ctx.font="bold 9px Segoe UI,sans-serif"; ctx.fillStyle=col; ctx.textBaseline="bottom";
+      const dispName=name.length>18?name.slice(0,17)+"\u2026":name;
+      ctx.fillText(dispName,spX0,yTop-3);
+    } else {
+      // Very tight — name inside chart top, small font
+      ctx.font="bold 7.5px Segoe UI,sans-serif"; ctx.fillStyle="rgba(255,255,255,0.72)"; ctx.textBaseline="top";
+      const dispName=name.length>14?name.slice(0,13)+"\u2026":name;
+      ctx.fillText(dispName,spX0+3,yTop+2);
+    }
     // Row-level blackout repaint so masked section remains opaque above lines
     allMo.forEach((m,j)=>{
       if(!isBlackoutMonth(m)) return;
@@ -1675,7 +1989,20 @@ function drawV2(){
       ctx.fillStyle="rgba(0,0,0,.92)";
       ctx.fillRect(x-1,yTop-1,Math.max(2,xSc*.94),spH+2);
     });
+    ctx.restore(); // end per-row clip
   });
+
+  // Legend footnote at bottom-left of chart area
+  ctx.save();
+  ctx.fillStyle="rgba(75,90,120,0.65)"; ctx.font="7px Segoe UI,sans-serif";
+  ctx.textAlign="left"; ctx.textBaseline="bottom";
+  const footLines=[
+    "Each colored row = one selected city \u00b7 Colored bars = CO\u2082 magnitude (white = low \u2192 red = high, scaled per city)",
+    "Line overlaid on bars shows the same values \u00b7 Both share the same y-axis scale \u00b7 Dot = most recent reading",
+    "Dashed mid-line = city average \u00b7 Dark bands = months with no satellite coverage"
+  ];
+  footLines.forEach((ln,i)=>ctx.fillText(ln,spX0,H-6-i*10));
+  ctx.restore();
 }
 
 // ── TIMELINE RANGE BRUSH ─────────────────────────────────────────
@@ -1865,7 +2192,7 @@ function drawV4(){
     return {c, mo, xv:scatVal(c,xk,mo), yv:scatVal(c,yk,mo), szv:scatVal(c,szk,mo), colv:scatVal(c,colk,mo)};
   }).filter(e=>e.xv!=null&&e.yv!=null);
 
-  if(!cityEntries.length){noDataMsg("Not enough data for current settings.");return;}
+  if(!cityEntries.length){noDataMsg(`No cities have both "${xDef.short}" and "${yDef.short}" data.\nGDP, Population and Emissions are only available for 53 cities.\nTry switching an axis to CO\u2082 or SIF.`);return;}
 
   const xVals=cityEntries.map(e=>e.xv), yVals=cityEntries.map(e=>e.yv);
   const szVals=cityEntries.map(e=>e.szv).filter(v=>v!=null);
@@ -2038,8 +2365,7 @@ function drawV5(){
     const mo=filtMo(c.name);
     return {c,mo,xv:scatVal(c,xk,mo),yv:scatVal(c,yk,mo),szv:scatVal(c,szk,mo)};
   }).filter(e=>e.xv!=null&&e.yv!=null);
-  if(!cityEntries.length){noDataMsg("Not enough data for current settings.");return;}
-
+  if(!cityEntries.length){noDataMsg(`No cities have both "${xDef.short}" and "${yDef.short}" data.\nGDP, Population and Emissions are only available for 53 cities.\nTry switching an axis to CO\u2082 or SIF.`);return;}
   const xVals=cityEntries.map(e=>e.xv), yVals=cityEntries.map(e=>e.yv);
   const szVals=cityEntries.map(e=>e.szv).filter(v=>v!=null);
   const maxSz=d3.max(szVals)||1;
@@ -2338,7 +2664,7 @@ function render(){
     return;
   }
   switch(S.view){
-    case 0:drawV0();break; case 1:drawV1SplitCircle();break; case 2:drawV2();break;
+    case 0:drawV0();break; case 1:drawV0();break; case 2:drawV2();break;
     case 3:drawV3();break; case 4:drawV4();break; case 5:drawV5();break;
   }
   updateOverlays();
@@ -2347,7 +2673,7 @@ function render(){
 
 // ── AUTO-ROTATE ───────────────────────────────────────────────────
 function animTick(){
-  if(S.view<=1&&!S.drag?.on&&Date.now()-lastDrag>2800){
+  if(S.view===0&&!S.drag?.on&&Date.now()-lastDrag>2800){
     S.rot.lon=(S.rot.lon+.055)%360;
     render();
   }
@@ -2358,21 +2684,55 @@ function animTick(){
 const tt=document.getElementById("tt");
 function showTT(c,ex,ey){
   const stats=cityStats(c.name);
-  const sv=getSIF(c.name, stats?.months);
+  const months=stats?.months||filtMo(c.name);
+  const sv=getSIF(c.name,months);
   const hasSifData=SIF_MONTHLY[c.name]!=null;
+  const isSel=S.sel.includes(c.name);
+
   document.getElementById("tt-name").textContent=c.name+", "+c.country.split(" ").slice(-1)[0];
   const tb=document.getElementById("tt-body");
-  const rows=[];
-  rows.push(`<div class="tt-row">XCO\u2082 avg: <b>${stats?stats.avg.toFixed(2)+" ppm":"no data in range"}</b></div>`);
-  rows.push(`<div class="tt-row">SIF (OCO-3${hasSifData?"":", simul."}): <b>${sv.toFixed(3)} W/m\u00b2/sr/nm</b></div>`);
-  if(c.co2!=null) rows.push(`<div class="tt-row">CO\u2082 emissions: <b>${c.co2} MtCO\u2082/yr</b></div>`);
-  if(c.pop!=null) rows.push(`<div class="tt-row">Population: <b>${(c.pop/1e6).toFixed(1)}M</b></div>`);
-  if(c.gdp!=null) rows.push(`<div class="tt-row">GDP: <b>$${c.gdp}B</b></div>`);
-  if(c.co2!=null&&c.gdp!=null) rows.push(`<div class="tt-row">CO\u2082/GDP: <b>${(c.co2/c.gdp).toFixed(4)} kg/USD</b></div>`);
-  tb.innerHTML=rows.join('');
+  const parts=[];
+
+  // CO₂ + SIF circle row — only for selected cities on the globe view
+  if(isSel && S.view===0){
+    const co2Avg=stats?.avg;
+    // Compute co2t relative to all selected cities in range
+    const allCo2=S.sel.map(n=>cityStats(n)?.avg).filter(v=>v!=null&&isFinite(v));
+    const co2Min=allCo2.length?Math.min(...allCo2):410;
+    const co2Max=allCo2.length?Math.max(...allCo2):430;
+    const co2t=co2Avg!=null?Math.max(0,Math.min(1,(co2Avg-co2Min)/Math.max(0.8,co2Max-co2Min))):0;
+    const sift=Math.max(0,Math.min(1,sv/0.45));
+
+    // Convert co2Color01 and sifColor outputs into inline styles
+    function rgbToStyle(rgbStr){ return rgbStr; }
+    const co2Bg=co2Color01(co2t);
+    const sifBg=sifColor(sv);
+    const co2ValTxt=co2Avg!=null?co2Avg.toFixed(1)+" ppm":"—";
+    const sifValTxt=sv.toFixed(3)+" W/m²";
+
+    parts.push(`<div class="tt-circles">
+      <div class="tt-circle-wrap">
+        <div class="tt-circle-lbl">CO\u2082</div>
+        <div class="tt-circle" style="background:${co2Bg}"></div>
+        <div class="tt-circle-val">${co2ValTxt}</div>
+      </div>
+      <div class="tt-circle-wrap">
+        <div class="tt-circle-lbl">SIF</div>
+        <div class="tt-circle" style="background:${sifBg}"></div>
+        <div class="tt-circle-val">${sifValTxt}</div>
+      </div>
+    </div><hr class="tt-divider">`);
+  }
+
+  if(c.co2!=null) parts.push(`<div class="tt-row">CO\u2082 emissions: <b>${c.co2} MtCO\u2082/yr</b></div>`);
+  if(c.pop!=null) parts.push(`<div class="tt-row">Population: <b>${(c.pop/1e6).toFixed(1)}M</b></div>`);
+  if(c.gdp!=null) parts.push(`<div class="tt-row">GDP: <b>$${c.gdp}B</b></div>`);
+  if(c.co2!=null&&c.gdp!=null) parts.push(`<div class="tt-row">CO\u2082/GDP: <b>${(c.co2/c.gdp).toFixed(4)} kg/USD</b></div>`);
+
+  tb.innerHTML=parts.join('');
   const stage=document.getElementById("stage");
   const sr=stage.getBoundingClientRect();
-  const tx=Math.min(ex-sr.left+14,W-210);
+  const tx=Math.min(ex-sr.left+14,W-260);
   const ty=Math.max(ey-sr.top-80,10);
   tt.style.left=tx+"px"; tt.style.top=ty+"px"; tt.style.display="block";
 }
@@ -2383,18 +2743,18 @@ function updateOverlays(){
   const vh=document.getElementById("vhdr");
   vh.innerHTML=`<h2>${VIEWS[S.view]}</h2><p>${VHINTS[S.view]}</p>`;
   const gt=document.getElementById("gtog");
-  gt.style.display=(S.view===0||S.view===1)?"block":"none";
+  gt.style.display=(S.view===0)?"block":"none";
   gt.textContent=S.flat?"\u2299 3D Globe":"\u26F6 2D Map";
   gt.classList.toggle("flat",S.flat);
-  cv.style.cursor=(S.view===0||S.view===1)?"grab":"default";
+  cv.style.cursor=(S.view===0)?"grab":"default";
   const sc=document.getElementById("scat-ctrl");
   if(sc) sc.classList.toggle("on",S.view===4||S.view===5);
   const scCol=document.getElementById("sc-col-block");
   if(scCol) scCol.style.display=(S.view===5)?"none":"inline-flex";
   const mini=document.getElementById("mini-globes-sec");
   if(mini) mini.style.display=(S.view===4||S.view===5)?"block":"none";
-  // hide vhdr when scatter controls are shown (they overlap)
-  if(vh) vh.style.display=(S.view===4||S.view===5)?"none":"block";
+  // hide vhdr when an alternate top overlay is active
+  if(vh) vh.style.display=(S.view===3||S.view===4||S.view===5)?"none":"block";
   document.querySelectorAll(".dot").forEach(d=>d.classList.toggle("on",+d.dataset.v===S.view));
   document.querySelectorAll(".vb").forEach(b=>b.classList.toggle("on",+b.dataset.v===S.view));
 }
@@ -2513,7 +2873,7 @@ cv.addEventListener("mousedown",e=>{
     const mx=e.clientX-rect.left,my=e.clientY-rect.top;
     const t=S._v2tog;
     if(mx>=t.x&&mx<=t.x+t.w&&my>=t.y&&my<=t.y+t.h){
-      S.v2mode = (mx<t.x+t.w/2)?'pulse':'timeline';
+      S.v2mode = (mx<t.x+t.w/2)?'timeline':'pulse';
       render();
       return;
     }
@@ -2646,6 +3006,7 @@ function addCity(name){
 function removeCity(name){
   S.sel=S.sel.filter(n=>n!==name); delete S.colors[name];
   S.sel.forEach((n,i)=>{S.colors[n]=PAL[i];});
+  S.group=null;
   rebuildChips(); updateMonthsHint();
 }
 function rebuildChips(){
@@ -2664,7 +3025,54 @@ function rebuildChips(){
   const cnt=document.getElementById("sel-count");
   if(cnt) cnt.textContent=S.sel.length?`${S.sel.length} selected`:``;
   buildCityList(document.getElementById("srch").value);
+  syncGroupButtons();
   render();
+}
+
+// ── GROUP SELECTION ───────────────────────────────────────────────
+function setGroupCities(groupId){
+  if(S.group===groupId){ // second click → deactivate
+    S.group=null; S.sel=[]; S.colors={};
+    rebuildChips(); updateMonthsHint(); return;
+  }
+  const grp=CITY_GROUPS.find(g=>g.id===groupId);
+  if(!grp) return;
+  S.group=groupId;
+  S.sel=[]; S.colors={};
+  const valid=grp.cities.filter(n=>CITY_BY_NAME.has(n));
+  const limit=Math.min(valid.length, PAL.length);
+  for(let i=0;i<limit;i++){
+    const n=valid[i];
+    S.sel.push(n); S.colors[n]=PAL[i];
+  }
+  rebuildChips(); updateMonthsHint();
+}
+function syncGroupButtons(){
+  document.querySelectorAll(".grp-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.gid===S.group);
+  });
+  const clr=document.getElementById("grp-clear");
+  if(clr) clr.style.display=S.group?"block":"none";
+}
+function buildGroupButtons(){
+  const grid=document.getElementById("grp-grid");
+  if(!grid) return;
+  grid.innerHTML="";
+  CITY_GROUPS.forEach(g=>{
+    const btn=document.createElement("button");
+    btn.className="grp-btn"; btn.dataset.gid=g.id; btn.title=g.desc;
+    btn.innerHTML=g.label;
+    btn.addEventListener("click",()=>setGroupCities(g.id));
+    grid.appendChild(btn);
+  });
+  const clr=document.getElementById("grp-clear");
+  if(clr){
+    clr.style.display="none";
+    clr.addEventListener("click",()=>{
+      S.group=null; S.sel=[]; S.colors={};
+      rebuildChips(); updateMonthsHint();
+    });
+  }
 }
 function buildCityList(q=""){
   const el=document.getElementById("city-list"); if(!el) return;
@@ -2721,6 +3129,7 @@ function renderCitySearchSuggestions(q=""){
     row.className="ac-it";
     row.textContent=`${c.name}, ${c.country}`;
     row.addEventListener("click",()=>{
+      S.group=null;
       addCity(c.name);
       srch.value="";
       cityAc.classList.remove("open");
@@ -3029,6 +3438,7 @@ function finishSetView(v,prev){
 
 function setView(v){
   v=Math.max(0,Math.min(5,v));
+  if(v===1) v=0;
   if(v===S.view) return;
   const prev=S.view;
   const morphTargets=new Set([3,4,5]);
@@ -3042,7 +3452,7 @@ function setView(v){
 function setInitialViewFromQuery(){
   const view = new URLSearchParams(window.location.search).get("view");
   if(view==="globe") S.view = 0;
-  if(view==="comparison") S.view = 1;
+  if(view==="comparison") S.view = 0;
   if(view==="pulse" || view==="timeline") S.view = 2;
   if(view==="timeseries") S.view = 3;
   if(view==="scatter") S.view = 4;
@@ -3067,8 +3477,18 @@ document.querySelectorAll(".global-tab").forEach(tab=>{
     history.replaceState(null,"",href);
   });
 });
-document.getElementById("np").addEventListener("click",()=>setView(S.view-1));
-document.getElementById("nn").addEventListener("click",()=>setView(S.view+1));
+function stepView(delta){
+  const seq=[0,2,3,4,5];
+  let i=seq.indexOf(S.view);
+  if(i<0){
+    i=0;
+    while(i<seq.length-1&&seq[i]<S.view) i++;
+  }
+  const ni=Math.max(0,Math.min(seq.length-1,i+delta));
+  setView(seq[ni]);
+}
+document.getElementById("np").addEventListener("click",()=>stepView(-1));
+document.getElementById("nn").addEventListener("click",()=>stepView(1));
 document.getElementById("gtog").addEventListener("click",()=>{S.flat=!S.flat;render();});
 
 // Scatter axis controls
@@ -3095,7 +3515,7 @@ window.addEventListener("keydown",e=>{
 
 function buildDots(){
   const el=document.getElementById("dots"); el.innerHTML="";
-  [0,1,2,3,4,5].forEach(i=>{
+  [0,2,3,4,5].forEach(i=>{
     const d=document.createElement("div");
     d.dataset.v=i;
     d.className="dot"+(i===0?" on":""); d.title=VIEWS[i];
@@ -3117,6 +3537,7 @@ DEFAULT_SEL.forEach(n=>addCity(n));
 buildDots(); buildVGrid(); buildMonthRangeInputs();
 renderBandFilters();
 buildCityList();
+buildGroupButtons();
 updateMonthsHint();
 setupSidebarResize();
 setInitialViewFromQuery();
