@@ -4,13 +4,14 @@
 (function () {
   const TS_BANDS = [
     { key: 'arctic',    label: 'Arctic',           latMin:  60, latMax:  90, color: '#93d5f7' },
-    { key: 'mid_north', label: 'N. Mid-latitudes',  latMin:  30, latMax:  60, color: '#5b8ff9' },
-    { key: 'tropics',   label: 'Tropics',            latMin: -30, latMax:  30, color: '#ffc444' },
-    { key: 'mid_south', label: 'S. Mid-latitudes',   latMin: -60, latMax: -30, color: '#29d8a8' },
+    { key: 'mid_north', label: 'N. Mid-latitudes', latMin:  30, latMax:  60, color: '#5b8ff9' },
+    { key: 'tropics',   label: 'Tropics',          latMin: -30, latMax:  30, color: '#ffc444' },
+    { key: 'mid_south', label: 'S. Mid-latitudes', latMin: -60, latMax: -30, color: '#29d8a8' },
     { key: 'antarctic', label: 'Antarctic',          latMin: -90, latMax: -60, color: '#be8fff' },
   ];
 
   const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const SIDEBAR_BAND_KEYS = new Set(['mid_north', 'tropics', 'mid_south']);
   const CO2_ROWS_EST = 6053903;
   const SIF_ROWS_EST = 18929841;
   const TS_PALETTE = [
@@ -79,6 +80,50 @@
 
   function filteredMonths(S) { return allMonths.filter(m => monthInRange(m, S)); }
 
+  function tagInRange(tag, S) {
+    if (!S?.mfrom || !S?.mto) return true;
+    return tag >= S.mfrom && tag <= S.mto;
+  }
+
+  function allMonthTags() {
+    const tags = [];
+    for (let y = 2019; y <= 2025; y++)
+      for (let m = 1; m <= 12; m++)
+        tags.push(y + '-' + String(m).padStart(2, '0'));
+    return tags.filter(t => t >= '2019-08' && t <= '2025-12');
+  }
+
+  function filteredMonthTags(S) {
+    return allMonthTags().filter(t => tagInRange(t, S));
+  }
+
+  function embeddedSeries(mode) {
+    if (mode === 'co2') return window.CO2_MONTHLY || null;
+    return window.SIF_MONTHLY || null;
+  }
+
+  function citiesWithEmbeddedData(selNames, mode, monthTags) {
+    const series = embeddedSeries(mode);
+    if (!series) return [];
+    return selNames.filter(name => {
+      const mo = series[name];
+      return mo && monthTags.some(t => mo[t] != null);
+    });
+  }
+
+  function valsFromEmbedded(name, mode, monthTags) {
+    const mo = embeddedSeries(mode)?.[name];
+    if (!mo) return monthTags.map(() => null);
+    return monthTags.map(t => (mo[t] != null ? mo[t] : null));
+  }
+
+  function bandValueForTag(avgs, tag) {
+    if (!avgs) return null;
+    for (const [ms, v] of avgs)
+      if (msToTag(ms) === tag) return v;
+    return null;
+  }
+
   function rebuildAllMonths() {
     const set = new Set();
     for (const mm of co2Raw.values())  for (const ms of mm.keys()) set.add(ms);
@@ -104,7 +149,7 @@
     // both loaded — show mode-specific status
     if (lastS) {
       const n = (lastS.sel || []).length;
-      const months = filteredMonths(lastS).length;
+      const months = filteredMonthTags(lastS).length;
       const hl = highlighted.size ? ` · ${[...highlighted].join(', ')} highlighted` : '';
       status.textContent = `${n} cit${n !== 1 ? 'ies' : 'y'} · ${months} months · click a line to bold${hl}`;
     }
@@ -197,9 +242,10 @@
     syncToggle();
 
     const hint   = document.getElementById('ts-hint');
-    const ready  = tsMode === 'co2' ? co2Loaded : sifLoaded;
+    const hasEmbedded = !!embeddedSeries(tsMode);
+    const csvReady    = tsMode === 'co2' ? co2Loaded : sifLoaded;
 
-    if (!ready) {
+    if (!hasEmbedded && !csvReady) {
       updateStatus();
       if (hint) {
         hint.textContent = tsMode === 'co2' ? 'Loading CO₂ data…' : 'Loading SIF data… (this may take a moment)';
@@ -210,8 +256,13 @@
 
     const selNames    = S.sel || [];
     const activeBands = S.activeBands || new Set();
+    const monthTags   = filteredMonthTags(S);
+    const labels      = monthTags.map(t => {
+      const [y, m] = t.split('-');
+      return `${MONTH_SHORT[+m - 1]} ${y}`;
+    });
     const hasCity     = selNames.length > 0;
-    const hasBand     = activeBands.size > 0 && tsMode === 'co2';
+    const hasBand     = co2Loaded && activeBands.size > 0 && tsMode === 'co2';
 
     if (!hasCity && !hasBand) {
       if (hint) { hint.innerHTML = 'Select cities in the sidebar<br>or toggle latitude bands'; hint.style.display = 'block'; }
@@ -221,56 +272,54 @@
     }
     if (hint) hint.style.display = 'none';
 
-    const months    = filteredMonths(S);
-    const labels    = months.map(m => { const d = new Date(m); return `${MONTH_SHORT[d.getUTCMonth()]} ${d.getUTCFullYear()}`; });
     const datasets  = [];
     const anyHL     = highlighted.size > 0;
 
-    // ── lat-band lines (CO₂ mode only) ────────────────────────
-    if (tsMode === 'co2') {
+    // ── lat-band lines (CO₂ mode only, neutral gray — no color encoding) ──
+    if (hasBand) {
+      let bandIdx = 0;
       for (const band of TS_BANDS) {
-        if (!activeBands.has(band.key)) continue;
+        if (!SIDEBAR_BAND_KEYS.has(band.key) || !activeBands.has(band.key)) continue;
         const avgs = bandAvgs.get(band.key);
         datasets.push({
           label: band.label + ' avg', yAxisID: 'y',
-          data: months.map(m => avgs.has(m) ? avgs.get(m) : null),
-          borderColor: band.color + '55', backgroundColor: 'transparent',
-          borderWidth: 1.2, fill: false, tension: 0, pointRadius: 0, spanGaps: true, order: 10,
+          data: monthTags.map(t => bandValueForTag(avgs, t)),
+          borderColor: 'rgba(150,155,170,0.55)', backgroundColor: 'transparent',
+          borderWidth: 1.2, borderDash: bandIdx === 0 ? [] : bandIdx === 1 ? [6, 4] : [2, 4],
+          fill: false, tension: 0, pointRadius: 0, spanGaps: true, order: 10,
         });
+        bandIdx++;
       }
     }
 
     if (hasCity) {
-      const cityKeys  = cityKeysForSelection(selNames);
-      const co2AvgMap = tsMode === 'co2'
-        ? new Map(cityKeys.map(k => [cityMeta.get(k).city, buildCo2MonthlyAvgs(k)]))
-        : null;
+      let activeCities = citiesWithEmbeddedData(selNames, tsMode, monthTags);
+      let getVals = name => valsFromEmbedded(name, tsMode, monthTags);
 
-      // per-city value lookup
-      function getVals(cityName) {
-        return months.map(ms => {
+      // Fallback to CSV aggregates if embedded series missing for a city
+      if (!hasEmbedded) {
+        const cityKeys  = cityKeysForSelection(selNames);
+        const co2AvgMap = tsMode === 'co2'
+          ? new Map(cityKeys.map(k => [cityMeta.get(k).city, buildCo2MonthlyAvgs(k)]))
+          : null;
+        activeCities = tsMode === 'co2'
+          ? cityKeys.map(k => cityMeta.get(k).city)
+          : selNames.filter(name => sifAvgs.has(name));
+        const csvMonths = filteredMonths(S);
+        getVals = cityName => csvMonths.map(ms => {
           if (tsMode === 'co2') {
             const avgs = co2AvgMap.get(cityName);
             return avgs ? (avgs[ms] ?? null) : null;
           }
-          // SIF mode — use sifAvgs keyed by millisecond timestamp
           const mo = sifAvgs.get(cityName);
           return mo ? (mo.get(ms) ?? null) : null;
         });
       }
 
-      // gather city names that actually have data in this mode
-      const activeCities = tsMode === 'co2'
-        ? cityKeys.map(k => cityMeta.get(k).city)
-        : selNames.filter(name => sifAvgs.has(name));
-
       // ── mean ±1σ band (milk spill) ───────────────────────────
       const meanArr = [], upperArr = [], lowerArr = [];
-      for (let j = 0; j < months.length; j++) {
-        const vals = activeCities.map(name => {
-          const arr = getVals(name);
-          return arr[j];
-        }).filter(v => v != null);
+      for (let j = 0; j < monthTags.length; j++) {
+        const vals = activeCities.map(name => getVals(name)[j]).filter(v => v != null);
         if (!vals.length) { meanArr.push(null); upperArr.push(null); lowerArr.push(null); continue; }
         const mean = vals.reduce((s, v) => s + v, 0) / vals.length;
         const std  = vals.length > 1
@@ -462,7 +511,7 @@
     update(S) {
       if (!co2Loaded && !co2Loading) startLoadingCO2();
       if (!sifLoaded && !sifLoading) startLoadingSIF();
-      const ready = tsMode === 'co2' ? co2Loaded : sifLoaded;
+      const ready = !!embeddedSeries(tsMode) || (tsMode === 'co2' ? co2Loaded : sifLoaded);
       if (ready)  { updateChart(S); }
       else        { pendingS = S; updateStatus(); }
     },
